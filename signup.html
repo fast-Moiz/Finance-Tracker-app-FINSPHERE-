@@ -218,7 +218,7 @@ const btn = document.getElementById('signup-btn');
 btn.disabled = true;
 btn.innerHTML = '<span class="spinner"></span> Creating Account...';
 try {
-const response = await fetch('http://127.0.0.1:5500/api/auth/signup', {
+const response = await fetch('http://127.0.0.1:3000/api/auth/signup', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ full_name, email, password })

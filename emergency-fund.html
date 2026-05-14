@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinSphere — Emergency Fund Readiness</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="emergency-fund.css"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+</head>
+<body>
+
+  <canvas id="particle-canvas"></canvas>
+  <div class="bg-layer">
+    <div class="bg-mesh"></div>
+    <div class="orb-a bg-orb"></div>
+    <div class="orb-b bg-orb"></div>
+    <div class="orb-c bg-orb"></div>
+  </div>
+
+  <!-- Page loader shown while API data is fetching -->
+  <div class="page-loader" id="page-loader">
+    <div class="loader-spinner"></div>
+  </div>
+
+
+  <div class="ef-toast" id="toast"><span id="toast-msg"></span></div>
+
+  <div class="dash-layout">
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <nav class="sidebar" id="sidebar">
+
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">◈</div>
+        <div class="sidebar-logo-name">Fin<em>Sphere</em></div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <a href="dashboard.html" class="nav-item ">
+          <i class="fa-solid fa-gauge-high"></i>
+          Dashboard
+        </a>
+        <a href="health.html" class="nav-item">
+          <i class="fa-solid fa-heart-pulse"></i>
+          Health Score
+        </a>
+        <a href="transactions.html" class="nav-item">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Transactions
+          
+        </a>
+        <a href="budgets.html" class="nav-item">
+          <i class="fa-solid fa-chart-pie"></i>
+          Budgets
+        </a>
+        <a href="savings.html" class="nav-item">
+          <i class="fa-solid fa-piggy-bank"></i>
+          Savings Goals
+        </a>
+        <a href="emergency-fund.html" class="nav-item active">
+          <i class="fa-solid fa-shield-halved"></i>
+          Emergency Fund
+        </a>
+        <a href="subscriptions.html" class="nav-item">
+          <i class="fa-solid fa-receipt"></i>
+          Bills &amp; Subscriptions
+        </a>
+        <a href="future-projection-simulator.html" class="nav-item">
+          <i class="fa-solid fa-rocket"></i>
+           Future Simulator
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-profile">
+          <!-- Avatar initials — filled by renderProfile() -->
+          <div class="profile-avatar">--</div>
+          <div class="profile-info">
+            <!-- Full name — filled by renderProfile() -->
+            <div class="profile-name">Loading…</div>
+            <div class="profile-role">Member</div>
+          </div>
+          <i class="fa-solid fa-chevron-right profile-chevron"></i>
+        </div>
+        <a href="login.html" class="sidebar-signout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Sign Out
+        </a>
+      </div>
+    </nav>
+      <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <!-- ═══ MAIN WRAP ═══ -->
+    <div class="main-wrap">
+
+      <!-- Topbar -->
+      <div class="topbar">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="topbar-title">Emergency <em>Fund Readiness</em></div>
+        <div class="topbar-actions">
+          <select class="topbar-select" id="currency-sel" onchange="updateAll()">
+            <option value="$" selected>USD $</option>
+          </select>
+          <div class="topbar-notif">
+            <i class="fa-regular fa-bell"></i>
+           
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+
+        <div class="greeting">
+          <h2>Emergency <em>Fund Readiness</em> 🛡️</h2>
+          <p>Know exactly how many months of financial security you have — and what it takes to reach full readiness.</p>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="row-4">
+          <div class="card ef-stat-card" style="--d:0.10s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-circle-check"></i>Fund Status</span>
+            </div>
+            <div class="stat-mini-val savings" id="status-val" style="font-size:20px;margin-top:10px;">Calculating…</div>
+            <div class="stat-mini-sub" id="status-sub">Analyzing your fund</div>
+          </div>
+
+          <div class="card ef-stat-card" style="--d:0.14s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-vault"></i>Current Fund</span>
+              <span class="card-badge badge-up" id="badge-pct">0%</span>
+            </div>
+            <div class="stat-mini-val income" id="gs-current" style="font-size:24px;margin-top:8px;">$14,500</div>
+            <div class="stat-mini-sub">in emergency savings</div>
+          </div>
+
+          <div class="card ef-stat-card" style="--d:0.18s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-bullseye"></i>Target Fund</span>
+            </div>
+            <div class="stat-mini-val invest" id="gs-target" style="font-size:24px;margin-top:8px;">$29,700</div>
+            <div class="stat-mini-sub" id="gs-target-sub">6 months of expenses</div>
+          </div>
+
+          <div class="card ef-stat-card" style="--d:0.22s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-clock"></i>Time to Goal</span>
+            </div>
+            <div class="stat-mini-val" id="gs-ttg" style="font-size:24px;margin-top:8px;background:linear-gradient(135deg,var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">—</div>
+            <div class="stat-mini-sub" id="gs-ttg-sub">loading…</div>
+          </div>
+        </div>
+
+        <!-- Main Row -->
+        <div class="row-main">
+
+          <!-- LEFT: Gauge -->
+          <div class="card chart-card ef-gauge-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-shield-halved"></i>Coverage Gauge</span>
+              <div id="gauge-caption" class="card-badge badge-warn">⚠️ Partially Funded</div>
+            </div>
+
+            <div class="ef-gauge-inner">
+              <div class="ef-gauge-stats-l">
+                <div class="ef-gstat">
+                  <div class="ef-gstat-lbl">Monthly Expenses</div>
+                  <div class="ef-gstat-val" id="gs-monthly" style="color:var(--gold)">—</div>
+                  <div class="ef-gstat-sub">total fixed + variable</div>
+                </div>
+                <div class="ef-gstat">
+                  <div class="ef-gstat-lbl">Gap to Close</div>
+                  <div class="ef-gstat-val" id="gs-gap" style="color:var(--error)">—</div>
+                  <div class="ef-gstat-sub" id="gs-gap-sub">still needed</div>
+                </div>
+              </div>
+
+              <div class="ef-gauge-center">
+                <div class="ef-gauge-wrap">
+                  <canvas id="gaugeCanvas" width="170" height="170"></canvas>
+                  <div class="ef-gauge-txt">
+                    <span class="ef-gauge-months" id="gauge-months-txt" style="color:var(--cyan)">—</span>
+                    <div class="ef-gauge-unit">months covered</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ef-gauge-stats-r">
+                <div class="ef-gstat" style="text-align:right">
+                  <div class="ef-gstat-lbl">% Complete</div>
+                  <div class="ef-gstat-val" id="gs-pct" style="color:var(--success)">—</div>
+                  <div class="ef-gstat-sub">of target</div>
+                </div>
+                <div class="ef-gstat" style="text-align:right">
+                  <div class="ef-gstat-lbl">Target Date</div>
+                  <div class="ef-gstat-val" id="ttg-date" style="color:var(--violet)">—</div>
+                  <div class="ef-gstat-sub">at current rate</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Month Meter -->
+            <div class="ef-month-meter">
+              <div class="ef-mm-bar-wrap">
+                <div class="ef-mm-zones" id="mm-zones"></div>
+                <div class="ef-mm-fill" id="mm-fill" style="background:linear-gradient(90deg,var(--error),var(--gold),var(--cyan))"></div>
+                <div id="mm-target-marker" style="position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.5);border-radius:1px;transition:left 1s ease"></div>
+              </div>
+              <div class="ef-mm-ticks" id="mm-ticks"></div>
+            </div>
+
+            <div class="ef-zone-legend">
+              <div class="ef-zl-item"><div class="ef-zl-dot" style="background:var(--error)"></div>Critical (0–2mo)</div>
+              <div class="ef-zl-item"><div class="ef-zl-dot" style="background:#fb923c"></div>Caution (2–3mo)</div>
+              <div class="ef-zl-item"><div class="ef-zl-dot" style="background:var(--gold)"></div>Fair (3–4mo)</div>
+              <div class="ef-zl-item"><div class="ef-zl-dot" style="background:var(--cyan)"></div>Good (4–6mo)</div>
+              <div class="ef-zl-item"><div class="ef-zl-dot" style="background:var(--success)"></div>Excellent (6mo+)</div>
+            </div>
+
+            <div class="ef-ring-grid" id="ring-grid"></div>
+
+          </div>
+
+          <!-- RIGHT: Controls -->
+          <div style="display:flex;flex-direction:column;gap:18px;">
+
+            <!-- Readiness Score -->
+            <div class="card ef-right-card">
+              <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-gauge-high"></i>Readiness Score</span>
+              </div>
+              <div class="ef-readiness-wrap">
+                <div class="ef-readiness-ring">
+                  <canvas id="readinessCanvas" width="90" height="90"></canvas>
+                  <div class="ef-readiness-center">
+                    <div class="ef-readiness-score" id="readiness-score" style="color:var(--cyan)">—</div>
+                    <div class="ef-readiness-label">/100</div>
+                  </div>
+                </div>
+                <div class="ef-readiness-info">
+                  <div class="ef-readiness-grade" id="readiness-grade" style="color:var(--gold)">Loading…</div>
+                  <div class="ef-risk-indicator" id="risk-indicator">
+                    <span id="risk-icon">⏳</span>
+                    <div>
+                      <div class="ef-risk-label" id="risk-label">Fetching data…</div>
+                      <div class="ef-risk-desc" id="risk-desc">Please wait while we load your fund data.</div>
+                    </div>
+                  </div>
+                  <div class="ef-progress-row">
+                    <div class="ef-progress-meta">
+                      <span class="ef-progress-lbl">Fund Progress</span>
+                      <span class="ef-progress-val" id="plan-pct" style="color:var(--violet)">0%</span>
+                    </div>
+                    <div class="hm-bar-track" style="margin-top:4px">
+                      <div class="hm-bar-fill" id="plan-bar" style="background:linear-gradient(90deg,var(--violet),var(--cyan));width:0%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Monthly Expenses -->
+            <div class="card ef-right-card">
+              <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-list-check"></i>Monthly Expenses</span>
+                <span class="card-badge badge-info" id="total-monthly">$0</span>
+              </div>
+              <div class="ef-exp-list" id="exp-list" style="margin-top:14px;"></div>
+            </div>
+
+            <!-- Coverage Target & Fund -->
+            <div class="card ef-right-card">
+              <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-shield"></i>Coverage Target &amp; Fund</span>
+              </div>
+              <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:14px;margin-top:14px;">
+                <div>
+                  <div style="font-size:11px;color:var(--text-500);margin-bottom:8px;">Target coverage months</div>
+                  <div class="ef-cov-row">
+                    <div class="ef-cov-btn" id="cov-3"  onclick="setCoverage(3)">3 mo</div>
+                    <div class="ef-cov-btn" id="cov-4"  onclick="setCoverage(4)">4 mo</div>
+                    <div class="ef-cov-btn active" id="cov-6" onclick="setCoverage(6)">6 mo ★</div>
+                    <div class="ef-cov-btn" id="cov-9"  onclick="setCoverage(9)">9 mo</div>
+                    <div class="ef-cov-btn" id="cov-12" onclick="setCoverage(12)">12 mo</div>
+                  </div>
+                  <div style="font-size:10.5px;color:var(--text-700);margin-top:5px;text-align:center">Experts recommend 3–6 months · High-risk jobs: 6–12</div>
+                </div>
+
+                <div class="ef-fund-input">
+                  <div class="ef-fund-icon">🏦</div>
+                  <span class="ef-fund-label">Current Emergency Fund</span>
+                  <span class="ef-fund-pfx" id="currency-pfx">$</span>
+                  <input class="ef-fund-inp" type="number" id="fi-fund" value="14500" min="0" oninput="updateAll()"/>
+                </div>
+
+                <div class="ef-ms-row">
+                  <div class="ef-ms-meta">
+                    <span style="font-size:13px;font-weight:500;color:var(--text-300);">Monthly Contribution</span>
+                    <span style="font-size:13px;font-weight:700;color:var(--gold);" id="ms-val-lbl">$500/mo</span>
+                  </div>
+                  <input type="range" class="ef-slider" min="0" max="3000" step="25" value="500" id="ms-slider"
+                    oninput="document.getElementById('ms-val-lbl').textContent=getCur()+this.value+'/mo';updateAll()"
+                    style="accent-color:var(--gold)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Steps -->
+            <div class="card ef-right-card">
+              <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-list-check"></i>Action Steps</span>
+              </div>
+              <div class="ef-action-list" id="action-list" style="margin-top:14px;padding:0 22px 20px;"></div>
+            </div>
+
+            <!-- Savings Plan -->
+            <div class="card ef-right-card">
+              <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-calendar-day"></i>Savings Plan</span>
+              </div>
+              <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:10px;margin-top:14px;">
+                <div class="ef-plan-row">
+                  <div class="ef-plan-meta">
+                    <span class="ef-plan-lbl">Monthly contribution</span>
+                    <span class="ef-plan-val" id="need-per-mo" style="color:var(--cyan)">$500</span>
+                  </div>
+                  <div class="hm-bar-track" style="margin-top:4px"><div class="hm-bar-fill" id="pb-mo" style="background:var(--cyan);width:50%"></div></div>
+                </div>
+                <div class="ef-plan-row">
+                  <div class="ef-plan-meta">
+                    <span class="ef-plan-lbl">Annual target</span>
+                    <span class="ef-plan-val" id="annual-target" style="color:var(--success)">$6,000</span>
+                  </div>
+                  <div class="hm-bar-track" style="margin-top:4px"><div class="hm-bar-fill" id="pb-yr" style="background:var(--success);width:40%"></div></div>
+                </div>
+                <div class="ef-plan-row">
+                  <div class="ef-plan-meta">
+                    <span class="ef-plan-lbl">Income % to save</span>
+                    <span class="ef-plan-val" id="income-pct" style="color:var(--violet)">8.3%</span>
+                  </div>
+                  <div class="hm-bar-track" style="margin-top:4px"><div class="hm-bar-fill" id="pb-inc" style="background:var(--violet);width:30%"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <button class="ef-save-btn" onclick="saveAndRecalc()">
+              <i class="fa-solid fa-shield-check" id="save-icon"></i>
+              Save &amp; Recalculate
+            </button>
+
+          </div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /main-wrap -->
+  </div><!-- /dash-layout -->
+
+  <script src="emergency-fund.js"></script>
+</body>
+</html>

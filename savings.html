@@ -16,69 +16,82 @@
 
   <div class="dash-layout">
 
-    <aside class="sidebar" id="sidebar">
+<nav class="sidebar" id="sidebar">
+
       <div class="sidebar-logo">
         <div class="sidebar-logo-icon">◈</div>
-        <span class="sidebar-logo-name">Fin<em>Sphere</em></span>
+        <div class="sidebar-logo-name">Fin<em>Sphere</em></div>
       </div>
 
       <div class="sidebar-nav">
         <div class="sidebar-section-label">Main Menu</div>
 
         <a href="dashboard.html" class="nav-item">
-          <i class="fa-solid fa-grid-2"></i> Dashboard
+          <i class="fa-solid fa-gauge-high"></i>
+          Dashboard
         </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-chart-line"></i> Analytics
-          <span class="nav-badge">New</span>
+        <a href="health.html" class="nav-item">
+          <i class="fa-solid fa-heart-pulse"></i>
+          Health Score
         </a>
         <a href="transactions.html" class="nav-item">
-          <i class="fa-solid fa-arrow-right-arrow-left"></i> Transactions
-          <span class="nav-badge red">3</span>
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Transactions
         </a>
         <a href="budgets.html" class="nav-item">
-          <i class="fa-solid fa-sliders"></i> Budgets
+          <i class="fa-solid fa-chart-pie"></i>
+          Budgets
         </a>
         <a href="savings.html" class="nav-item active">
-          <i class="fa-solid fa-piggy-bank"></i> Savings Goals
+          <i class="fa-solid fa-piggy-bank"></i>
+          Savings Goals
         </a>
-
-        <div class="sidebar-section-label" style="margin-top:8px;">Account</div>
-
+        <a href="emergency-fund.html" class="nav-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          Emergency Fund
+        </a>
         <a href="subscriptions.html" class="nav-item">
-          <i class="fa-solid fa-receipt"></i> Bills &amp; Subscriptions
+          <i class="fa-solid fa-receipt"></i>
+          Bills &amp; Subscriptions
         </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-shield-halved"></i> Security
-        </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-gear"></i> Settings
+        <a href="future-projection-simulator.html" class="nav-item">
+          <i class="fa-solid fa-rocket"></i>
+           Future Simulator
         </a>
       </div>
 
       <div class="sidebar-bottom">
         <div class="sidebar-profile">
-          <div class="profile-avatar">MS</div>
+          <!-- Avatar initials — filled by renderProfile() -->
+          <div class="profile-avatar">--</div>
           <div class="profile-info">
-            <div class="profile-name">Muhammad Bin Shahid</div>
-            <div class="profile-role">Premium Member</div>
+            <!-- Full name — filled by renderProfile() -->
+            <div class="profile-name">Loading…</div>
+            <div class="profile-role">Member</div>
           </div>
           <i class="fa-solid fa-chevron-right profile-chevron"></i>
         </div>
         <a href="login.html" class="sidebar-signout">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Sign Out
         </a>
       </div>
-    </aside>
+    </nav>
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <div class="main-wrap">
-      <header class="topbar">
-        <button class="topbar-hamburger" id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
-          <i class="fa fa-bars"></i>
+    <header class="topbar">
+      <button class="topbar-hamburger" id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
+        <i class="fa fa-bars"></i>
+      </button>
+      <span class="topbar-title">Saving<em>Goals</em></span>
+      <div class="topbar-right">
+        <button class="topbar-icon-btn" title="Notifications">
+          <i class="fa fa-bell"></i>
         </button>
-        <span class="topbar-title">Savings <em>Goals</em></span>
-      </header>
+       
+      </div>
+    </header>
 
       <main class="page-content">
         <div class="page-header">
@@ -89,35 +102,74 @@
           <button class="btn-add-txn" onclick="openGoalModal()"><i class="fa fa-plus"></i> New Goal</button>
         </div>
 
+        <!-- Toast notification -->
+        <div id="toast" class="toast" style="display:none;"></div>
+
+        <!-- Loading state -->
+        <div id="goals-loading" style="text-align:center;padding:60px;color:var(--text-500);display:none;">
+          <i class="fa fa-spinner fa-spin" style="font-size:28px;margin-bottom:12px;display:block;"></i>
+          Loading your goals...
+        </div>
+
+        <!-- Empty state -->
+        <div id="goals-empty" style="text-align:center;padding:60px;color:var(--text-500);display:none;">
+          <i class="fa fa-piggy-bank" style="font-size:40px;margin-bottom:16px;display:block;opacity:0.3;"></i>
+          <p style="font-size:16px;margin-bottom:8px;">No savings goals yet.</p>
+          <p style="font-size:13px;">Click <strong>+ New Goal</strong> to get started.</p>
+        </div>
+
         <div class="goals-grid" id="goals-container"></div>
       </main>
     </div>
   </div>
 
+  <!-- Create / Edit Goal Modal -->
   <div class="modal-overlay" id="goal-modal">
     <div class="modal">
       <div class="modal-header">
-        <span class="modal-title">Create Goal</span>
+        <span class="modal-title" id="modal-title">Create Goal</span>
         <button class="modal-close" onclick="closeGoalModal()"><i class="fa fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <form id="goal-form">
-          <div class="form-group">
-            <label class="form-label">Goal Name</label>
-            <input type="text" id="g-name" class="form-control" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Target Amount</label>
-            <input type="number" id="g-target" class="form-control" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Deadline</label>
-            <input type="date" id="g-date" class="form-control" required/>
-          </div>
-        </form>
+        <div id="modal-error" style="display:none;color:#f87171;font-size:13px;margin-bottom:12px;padding:10px;background:rgba(248,113,113,0.1);border-radius:8px;"></div>
+        <div class="form-group">
+          <label class="form-label">Goal Name</label>
+          <input type="text" id="g-name" class="form-control" placeholder="e.g. Emergency Fund" maxlength="100"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target Amount ($)</label>
+          <input type="number" id="g-target" class="form-control" placeholder="e.g. 10000" min="1" step="0.01"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Deadline</label>
+          <input type="date" id="g-date" class="form-control"/>
+        </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-modal-submit" onclick="saveGoal()">Save Goal</button>
+        <button class="btn-modal-cancel" onclick="closeGoalModal()" style="margin-right:8px;">Cancel</button>
+        <button class="btn-modal-submit" id="modal-submit-btn" onclick="saveGoal()">Save Goal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Funds Modal -->
+  <div class="modal-overlay" id="funds-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Add Funds</span>
+        <button class="modal-close" onclick="closeFundsModal()"><i class="fa fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p id="funds-goal-name" style="color:var(--text-300);font-size:14px;margin-bottom:16px;"></p>
+        <div id="funds-error" style="display:none;color:#f87171;font-size:13px;margin-bottom:12px;padding:10px;background:rgba(248,113,113,0.1);border-radius:8px;"></div>
+        <div class="form-group">
+          <label class="form-label">Amount to Add ($)</label>
+          <input type="number" id="funds-amount" class="form-control" placeholder="e.g. 500" min="0.01" step="0.01"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeFundsModal()" style="margin-right:8px;">Cancel</button>
+        <button class="btn-modal-submit" onclick="submitFunds()">Add Funds</button>
       </div>
     </div>
   </div>

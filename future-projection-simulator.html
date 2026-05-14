@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinSphere — Future Projection Simulator</title>
+
+  <!-- External dependencies -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Google Fonts (matching dashboard) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"/>
+
+  <!-- Page stylesheet -->
+  <link rel="stylesheet" href="fututre-projection-simulator.css"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+</head>
+<body>
+
+  <!-- ════════════ BACKGROUND ════════════ -->
+  <canvas id="particle-canvas"></canvas>
+  <div class="bg-layer">
+    <div class="bg-mesh"></div>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="bg-orb orb-c"></div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check" style="color:var(--success);font-size:12px;"></i>
+    <span id="toast-msg">Simulation updated!</span>
+  </div>
+
+  <!-- Mobile sidebar overlay -->
+
+
+  <!-- ════════════ APP SHELL ════════════ -->
+  <div class="dash-layout">
+
+    <!-- ═══════════════════════════════════
+         SIDEBAR  (matches dashboard.html)
+    ═══════════════════════════════════ -->
+ <nav class="sidebar" id="sidebar">
+
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">◈</div>
+        <div class="sidebar-logo-name">Fin<em>Sphere</em></div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <a href="dashboard.html" class="nav-item">
+          <i class="fa-solid fa-gauge-high"></i>
+          Dashboard
+        </a>
+        <a href="health.html" class="nav-item">
+          <i class="fa-solid fa-heart-pulse"></i>
+          Health Score
+        </a>
+        <a href="transactions.html" class="nav-item">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Transactions
+        </a>
+        <a href="budgets.html" class="nav-item">
+          <i class="fa-solid fa-chart-pie"></i>
+          Budgets
+        </a>
+        <a href="savings.html" class="nav-item">
+          <i class="fa-solid fa-piggy-bank"></i>
+          Savings Goals
+        </a>
+        <a href="emergency-fund.html" class="nav-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          Emergency Fund
+        </a>
+        <a href="subscriptions.html" class="nav-item">
+          <i class="fa-solid fa-receipt"></i>
+          Bills &amp; Subscriptions
+        </a>
+        <a href="future-projection-simulator.html" class="nav-item active">
+          <i class="fa-solid fa-rocket"></i>
+           Future Simulator
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-profile">
+          <!-- Avatar initials — filled by renderProfile() -->
+          <div class="profile-avatar">--</div>
+          <div class="profile-info">
+            <!-- Full name — filled by renderProfile() -->
+            <div class="profile-name">Loading…</div>
+            <div class="profile-role">Member</div>
+          </div>
+          <i class="fa-solid fa-chevron-right profile-chevron"></i>
+        </div>
+        <a href="login.html" class="sidebar-signout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Sign Out
+        </a>
+      </div>
+    </nav>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- ═══════════════════════════════════
+         MAIN CONTENT AREA
+    ═══════════════════════════════════ -->
+    <div class="main-wrap">
+
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="topbar-title">Future <em>Projection Simulator</em></div>
+        <div class="topbar-actions">
+          <select class="topbar-select" id="horizon-sel" onchange="onHorizonChange()">
+            <option value="5">5 Years</option>
+            <option value="10" selected>10 Years</option>
+            <option value="20">20 Years</option>
+            <option value="30">30 Years</option>
+          </select>
+          <div class="topbar-icon-btn" title="notification">
+            <i class="fa fa-bell"></i>
+            
+          </div>
+        </div>
+      </div>
+
+        <!-- ── TAB BAR + KPI STRIP ── -->
+        <div class="top-row">
+
+          <!-- Mode tabs -->
+          <div class="tab-bar">
+            <div class="tab active" id="tab-savings" onclick="switchTab('savings')">
+              <i class="fa-solid fa-chart-line"></i>Savings Growth
+            </div>
+            <div class="tab" id="tab-debt" onclick="switchTab('debt')">
+              <i class="fa-solid fa-credit-card"></i>Debt Payoff
+            </div>
+            <div class="tab" id="tab-whatif" onclick="switchTab('whatif')">
+              <i class="fa-solid fa-flask"></i>What-If
+            </div>
+          </div>
+
+          <!-- KPI strip -->
+          <div class="kpi-strip">
+
+            <div class="kpi kpi-cyan">
+              <div class="kpi-accent kpi-accent-cyan"></div>
+              <div class="kpi-label"><i class="fa-solid fa-piggy-bank"></i>Projected Savings</div>
+              <div class="kpi-val" id="kpi-savings">$284,600</div>
+              <div class="kpi-sub" id="kpi-savings-sub">in 10 yrs @ 7% return</div>
+            </div>
+
+            <div class="kpi kpi-success">
+              <div class="kpi-accent kpi-accent-success"></div>
+              <div class="kpi-label"><i class="fa-solid fa-circle-check"></i>Debt-Free Date</div>
+              <div class="kpi-val" id="kpi-debtfree">Nov 2027</div>
+              <div class="kpi-sub" id="kpi-debtfree-sub">saves $4,820 in interest</div>
+            </div>
+
+            <div class="kpi kpi-gold">
+              <div class="kpi-accent kpi-accent-gold"></div>
+              <div class="kpi-label"><i class="fa-solid fa-landmark"></i>Retirement Ready</div>
+              <div class="kpi-val" id="kpi-retire">2041</div>
+              <div class="kpi-sub" id="kpi-retire-sub">at 4% withdrawal rate</div>
+            </div>
+
+            <div class="kpi kpi-violet">
+              <div class="kpi-accent kpi-accent-violet"></div>
+              <div class="kpi-label"><i class="fa-solid fa-fire"></i>FIRE Number</div>
+              <div class="kpi-val" id="kpi-fire">$1.24M</div>
+              <div class="kpi-sub" id="kpi-fire-sub">25× annual expenses</div>
+            </div>
+
+            <div class="kpi kpi-orange">
+              <div class="kpi-accent kpi-accent-orange"></div>
+              <div class="kpi-label"><i class="fa-solid fa-moon"></i>Annual Zakat Due</div>
+              <div class="kpi-val" id="kpi-emerg">$388</div>
+              <div class="kpi-sub" id="kpi-emerg-sub">2.5% of savings above nisab</div>
+            </div>
+
+          </div>
+        </div><!-- /top-row -->
+
+        <!-- ── MAIN 3-COLUMN GRID ── -->
+        <div class="sim-grid">
+
+          <!-- ════ LEFT: INPUT PANEL ════ -->
+          <div class="left-panel">
+
+            <!-- Core Parameters -->
+            <div class="panel-card">
+              <div class="panel-card-title">
+                <i class="fa-solid fa-sliders"></i>Core Parameters
+              </div>
+
+              <div class="inp-row">
+                <div class="inp-meta">
+                  <span class="inp-name">Monthly Savings</span>
+                  <span class="inp-val inp-cyan" id="v-savings">$1,200 <span>/mo</span></span>
+                </div>
+                <input type="range" min="100" max="5000" step="50" value="1200"
+                       id="s-savings" oninput="onInput()" style="accent-color:var(--cyan);">
+              </div>
+
+              <div class="inp-row">
+                <div class="inp-meta">
+                  <span class="inp-name">Annual Return Rate</span>
+                  <span class="inp-val inp-success" id="v-return">7.0% <span>/yr</span></span>
+                </div>
+                <input type="range" min="1" max="20" step=".5" value="7"
+                       id="s-return" oninput="onInput()" style="accent-color:var(--success);">
+              </div>
+
+              <div class="inp-row">
+                <div class="inp-meta">
+                  <span class="inp-name">Current Savings</span>
+                  <span class="inp-val inp-violet" id="v-current">$24,000</span>
+                </div>
+                <input type="range" min="0" max="200000" step="1000" value="24000"
+                       id="s-current" oninput="onInput()" style="accent-color:var(--violet);">
+              </div>
+
+              <div class="inp-row">
+                <div class="inp-meta">
+                  <span class="inp-name">Inflation Rate</span>
+                  <span class="inp-val inp-gold" id="v-inflation">2.5% <span>/yr</span></span>
+                </div>
+                <input type="range" min="0" max="10" step=".5" value="2.5"
+                       id="s-inflation" oninput="onInput()" style="accent-color:var(--gold);">
+              </div>
+
+              <div class="inp-row">
+                <div class="inp-meta">
+                  <span class="inp-name">Annual Salary Raise</span>
+                  <span class="inp-val inp-mint" id="v-raise">+3.0% <span>/yr</span></span>
+                </div>
+                <input type="range" min="0" max="15" step=".5" value="3"
+                       id="s-raise" oninput="onInput()" style="accent-color:#34d399;">
+              </div>
+            </div><!-- /core params -->
+
+            <!-- Islamic Finance (Debt) Parameters -->
+            <div class="panel-card" id="debt-inputs">
+              <div class="panel-card-title">
+                <i class="fa-solid fa-credit-card"></i>Debt Parameters
+              </div>
+
+              <div class="inp-row">
+                <div class="inp-meta">
+                  <span class="inp-name">Total Debt</span>
+                  <span class="inp-val inp-error" id="v-debt">$18,500</span>
+                </div>
+                <input type="range" min="0" max="100000" step="500" value="18500"
+                       id="s-debt" oninput="onInput()" style="accent-color:var(--error);">
+              </div>
+
+              <div class="inp-row">
+                <div class="inp-meta">
+                  <span class="inp-name">Monthly Payment</span>
+                  <span class="inp-val inp-orange" id="v-payment">$650 <span>/mo</span></span>
+                </div>
+                <input type="range" min="100" max="3000" step="25" value="650"
+                       id="s-payment" oninput="onInput()" style="accent-color:#fb923c;">
+              </div>
+
+              <div class="inp-row">
+                <div class="inp-meta">
+                  <span class="inp-name">Avg. Interest Rate</span>
+                  <span class="inp-val inp-error" id="v-interest">14.0% <span>/yr</span></span>
+                </div>
+                <input type="range" min="0" max="30" step=".5" value="14"
+                       id="s-interest" oninput="onInput()" style="accent-color:var(--error);">
+              </div>
+
+
+            </div><!-- /debt params -->
+
+            <!-- Run simulation button -->
+            <button class="run-btn" onclick="runSimulation()">
+              <i class="fa-solid fa-rocket" id="run-icon"></i>
+              Run Full Simulation
+            </button>
+
+          </div><!-- /left-panel -->
+
+          <!-- ════ CENTER: CHART PANEL ════ -->
+          <div class="center-panel">
+
+            <!-- Scenario pills + raise control -->
+            <div class="scenario-row">
+              <div class="scenario-bar">
+                <div class="sc-pill active" id="sc-base"  onclick="setScenario('base')">
+                  <i class="fa-solid fa-minus"></i>Base
+                </div>
+                <div class="sc-pill sc-bull" id="sc-bull" onclick="setScenario('bull')">
+                  <i class="fa-solid fa-arrow-trend-up"></i>Bull
+                </div>
+                <div class="sc-pill sc-bear" id="sc-bear" onclick="setScenario('bear')">
+                  <i class="fa-solid fa-arrow-trend-down"></i>Bear
+                </div>
+                <div class="sc-pill" id="sc-all"  onclick="setScenario('all')">
+                  <i class="fa-solid fa-layer-group"></i>All
+                </div>
+              </div>
+            </div>
+
+            <!-- Main chart card -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title">
+                  <i class="fa-solid fa-chart-area"></i>
+                  <span id="chart-title">Savings Growth Forecast</span>
+                </div>
+                <span class="chart-badge" id="chart-badge">10-Year Projection</span>
+              </div>
+              <div class="chart-wrap">
+                <canvas id="mainChart"></canvas>
+              </div>
+              <div class="chart-legend" id="chart-legend">
+                <div class="cl-item"><div class="cl-dot" style="background:var(--cyan)"></div>Base Case</div>
+                <div class="cl-item"><div class="cl-dot" style="background:var(--success)"></div>Bull Case</div>
+                <div class="cl-item"><div class="cl-dot" style="background:var(--error)"></div>Bear Case</div>
+                <div class="cl-item"><div class="cl-dot" style="background:rgba(129,140,248,.5)"></div>Contributions</div>
+                <div class="cl-item"><span class="cl-dash" style="color:var(--gold)"></span>FIRE Target</div>
+              </div>
+            </div>
+
+          </div><!-- /center-panel -->
+
+          <!-- ════ RIGHT: RESULTS PANEL ════ -->
+          <div class="right-panel" id="right-panel">
+
+            <!-- ── Savings tab results (default visible) ── -->
+            <div id="rp-savings">
+
+              <div class="proj-card accent-cyan">
+                <div class="proj-title"><i class="fa-solid fa-coins" style="color:var(--cyan)"></i>Total at Horizon</div>
+                <div class="proj-val" id="rp-total10" style="color:var(--cyan);">$284,600</div>
+                <div class="proj-sub" id="rp-total10-sub">+$140,000 from returns</div>
+                <div class="proj-bar"><div class="proj-fill" id="pf-total10" style="background:var(--cyan);width:72%"></div></div>
+              </div>
+
+              <div class="proj-card accent-success">
+                <div class="proj-title"><i class="fa-solid fa-seedling" style="color:var(--success)"></i>Investment Returns</div>
+                <div class="proj-val" id="rp-interest" style="color:var(--success);">$140,000</div>
+                <div class="proj-sub" id="rp-interest-sub">vs $144,000 contributed</div>
+                <div class="proj-bar"><div class="proj-fill" id="pf-interest" style="background:var(--success);width:49%"></div></div>
+              </div>
+
+              <div class="proj-card accent-gold">
+                <div class="proj-title"><i class="fa-solid fa-fire" style="color:var(--gold)"></i>FIRE Progress</div>
+                <div class="proj-val" id="rp-fire-pct" style="color:var(--gold);">23%</div>
+                <div class="proj-sub" id="rp-fire-sub">$284K of $1.24M target</div>
+                <div class="proj-bar"><div class="proj-fill" id="pf-fire" style="background:var(--gold);width:23%"></div></div>
+              </div>
+
+              <div class="proj-card accent-violet">
+                <div class="proj-title"><i class="fa-solid fa-calendar-check" style="color:var(--violet)"></i>Real Value (Inflation)</div>
+                <div class="proj-val" id="rp-real" style="color:var(--violet);">$221,800</div>
+                <div class="proj-sub" id="rp-real-sub">purchasing power today</div>
+                <div class="proj-bar"><div class="proj-fill" id="pf-real" style="background:var(--violet);width:56%"></div></div>
+              </div>
+
+              <div class="proj-card" style="border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.04);">
+                <div class="proj-title"><i class="fa-solid fa-moon" style="color:var(--gold)"></i>Zakat This Year</div>
+                <div class="proj-val" id="rp-zakat" style="color:var(--gold);">$388</div>
+                <div class="proj-sub" id="rp-zakat-sub">2.5% on savings above nisab</div>
+                <div class="proj-bar"><div class="proj-fill" id="pf-zakat" style="background:var(--gold);width:3%"></div></div>
+              </div>
+
+              <div class="milestone-card">
+                <div class="ms-title"><i class="fa-solid fa-flag"></i>Key Milestones</div>
+                <div class="ms-list" id="ms-list"></div>
+              </div>
+
+            </div><!-- /rp-savings -->
+
+            <!-- ── Debt tab results (hidden initially) ── -->
+            <div id="rp-debt" style="display:none;flex-direction:column;gap:8px;">
+
+              <div class="debt-grid">
+                <div class="debt-stat">
+                  <div class="ds-label">Payoff Date</div>
+                  <div class="ds-val" id="ds-date" style="color:var(--success);">Nov 2027</div>
+                  <div class="ds-sub" id="ds-months">30 months</div>
+                </div>
+                <div class="debt-stat">
+                  <div class="ds-label">Total Interest</div>
+                  <div class="ds-val" id="ds-interest" style="color:var(--error);">$4,820</div>
+                  <div class="ds-sub">total cost of debt</div>
+                </div>
+                <div class="debt-stat">
+                  <div class="ds-label">Interest Saved</div>
+                  <div class="ds-val" id="ds-isaved" style="color:var(--success);">$3,210</div>
+                  <div class="ds-sub">vs minimum only</div>
+                </div>
+                <div class="debt-stat">
+                  <div class="ds-label">Freed Monthly</div>
+                  <div class="ds-val" id="ds-after" style="color:var(--cyan);">+$650</div>
+                  <div class="ds-sub">after payoff</div>
+                </div>
+              </div>
+
+              <div class="panel-card-title" style="font-size:10.5px;">
+                <i class="fa-solid fa-list" style="color:var(--cyan);"></i>Debt Breakdown
+              </div>
+              <div class="debt-items" id="debt-items-list"></div>
+
+              <div class="milestone-card" style="flex:1;margin-top:2px;">
+                <div class="ms-title" style="color:var(--error);">
+                  <i class="fa-solid fa-flag" style="color:var(--error);"></i>Payoff Milestones
+                </div>
+                <div class="ms-list" id="debt-ms-list"></div>
+              </div>
+
+            </div><!-- /rp-debt -->
+
+            <!-- ── What-If tab results (hidden initially) ── -->
+            <div id="rp-whatif" style="display:none;flex-direction:column;gap:8px;">
+
+              <div class="panel-card-title" style="font-size:11px;">
+                <i class="fa-solid fa-flask" style="color:var(--violet);"></i>Scenario Impact
+              </div>
+
+              <div class="whatif-grid" id="whatif-grid"></div>
+
+              <div class="proj-card accent-violet">
+                <div class="proj-title"><i class="fa-solid fa-plus-minus" style="color:var(--violet)"></i>Scenario Net Gain</div>
+                <div class="proj-val" id="wi-netgain" style="color:var(--violet);">+$0</div>
+                <div class="proj-sub" id="wi-netgain-sub">vs base case over 10 years</div>
+              </div>
+
+              <div class="proj-card accent-success">
+                <div class="proj-title"><i class="fa-solid fa-calendar" style="color:var(--success)"></i>FIRE Date Change</div>
+                <div class="proj-val" id="wi-fire-delta" style="color:var(--success);">0 yrs</div>
+                <div class="proj-sub" id="wi-fire-sub">select scenarios above</div>
+              </div>
+
+              <div class="milestone-card" style="flex:1;">
+                <div class="ms-title">
+                  <i class="fa-solid fa-lightbulb" style="color:var(--gold);"></i>Recommendations
+                </div>
+                <div class="ms-list" id="wi-recs"></div>
+              </div>
+
+            </div><!-- /rp-whatif -->
+
+          </div><!-- /right-panel -->
+        </div><!-- /sim-grid -->
+      </div><!-- /content -->
+    </div><!-- /main-wrap -->
+  </div><!-- /dash-layout -->
+
+  <!-- Page script -->
+  <script src="fututre-projection-simulator.js"></script>
+</body>
+</html>

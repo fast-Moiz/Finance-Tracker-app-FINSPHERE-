@@ -8,5 +8,17 @@
 .g-progress-ring::before { content: ''; position: absolute; inset: 8px; background: var(--navy-900); border-radius: 50%; }
 .g-pct { position: relative; font-size: 20px; font-weight: 700; color: var(--text-100); }
 .g-amounts { text-align: center; font-size: 14px; color: var(--text-300); margin-bottom: 16px; }
-.g-add-btn { width: 100%; padding: 10px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2); color: var(--cyan); border-radius: 8px; font-weight: 600; transition: 0.2s; }
+.g-add-btn { width: 100%; padding: 10px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2); color: var(--cyan); border-radius: 8px; font-weight: 600; transition: 0.2s; cursor: pointer; }
 .g-add-btn:hover { background: rgba(56,189,248,0.2); }
+
+/* Icon buttons (edit / delete) */
+.icon-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--panel-edge); background: rgba(255,255,255,0.04); color: var(--text-400); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.icon-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-100); }
+.icon-btn.danger:hover { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.3); color: #f87171; }
+
+/* Cancel button in modals */
+.btn-modal-cancel { padding: 10px 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--panel-edge); color: var(--text-300); border-radius: 8px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+.btn-modal-cancel:hover { background: rgba(255,255,255,0.1); color: var(--text-100); }
+
+/* Toast */
+.toast { position: sticky; top: 0; z-index: 10; }

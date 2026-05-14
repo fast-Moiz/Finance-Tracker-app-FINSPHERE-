@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinSphere — Financial Health</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <link rel="stylesheet" href="health.css"/>
+</head>
+<body>
+
+  <!-- Background -->
+  <canvas id="particle-canvas"></canvas>
+  <div class="bg-layer">
+    <div class="bg-mesh"></div>
+    <div class="orb-a bg-orb"></div>
+    <div class="orb-b bg-orb"></div>
+    <div class="orb-c bg-orb"></div>
+  </div>
+
+  <!-- Mobile sidebar overlay -->
+
+
+  <div class="dash-layout">
+
+    <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">◈</div>
+        <div class="sidebar-logo-name">Fin<em>Sphere</em></div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <a href="dashboard.html" class="nav-item">
+          <i class="fa-solid fa-gauge-high"></i>
+          Dashboard
+        </a>
+        <a href="health.html" class="nav-item active">
+          <i class="fa-solid fa-heart-pulse"></i>
+          Health Score
+        </a>
+        <a href="transactions.html" class="nav-item">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Transactions
+          
+        </a>
+        <a href="budgets.html" class="nav-item">
+          <i class="fa-solid fa-chart-pie"></i>
+          Budgets
+        </a>
+        <a href="savings.html" class="nav-item">
+          <i class="fa-solid fa-piggy-bank"></i>
+          Savings Goals
+        </a>
+        <a href="emergency-fund.html" class="nav-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          Emergency Fund
+        </a>
+        <a href="subscriptions.html" class="nav-item">
+          <i class="fa-solid fa-receipt"></i>
+          Bills &amp; Subscriptions
+        </a>
+        <a href="future-projection-simulator.html" class="nav-item">
+          <i class="fa-solid fa-rocket"></i>
+           Future Simulator
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-profile">
+          <!-- Avatar initials — filled by renderProfile() -->
+          <div class="profile-avatar">--</div>
+          <div class="profile-info">
+            <!-- Full name — filled by renderProfile() -->
+            <div class="profile-name">Loading…</div>
+            <div class="profile-role">Member</div>
+          </div>
+          <i class="fa-solid fa-chevron-right profile-chevron"></i>
+        </div>
+        <a href="login.html" class="sidebar-signout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Sign Out
+        </a>
+      </div>
+    </nav>
+
+<!-- Sidebar overlay — closes sidebar on mobile when clicked -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <!-- MAIN WRAP -->
+    <div class="main-wrap">
+
+      <!-- Topbar -->
+      <div class="topbar">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="topbar-title">Financial <em>Health</em></div>
+        <div class="topbar-actions">
+          <button class="topbar-btn" onclick="refreshData()">
+            <i class="fa-solid fa-rotate"></i>
+            Refresh
+          </button>
+          <div class="topbar-notif">
+            <i class="fa-regular fa-bell"></i>
+          
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+
+        <!-- Greeting -->
+        <div class="greeting">
+          <h2>Financial Health <em>Report</em> 🩺</h2>
+          <p>A comprehensive breakdown of your financial wellness — updated as of May 2, 2026.</p>
+        </div>
+
+        <!-- ══════════════════════════════════
+             1. HEALTH SCORE + SUMMARY CARDS
+        ══════════════════════════════════ -->
+        <div class="row-4">
+
+          <!-- Health Score Card (spans 1 col but taller) -->
+          <div class="card health-score-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-heart-pulse"></i>Health Score</span>
+              <span class="card-badge" id="score-badge">Good</span>
+            </div>
+            <div class="hs-body">
+              <div class="hs-ring-wrap">
+                <canvas id="healthRingCanvas" width="140" height="140"></canvas>
+                <div class="hs-ring-label">
+                  <span class="hs-score-num" id="hs-score-num">0</span>
+                  <span class="hs-score-denom">/ 100</span>
+                  <span class="hs-score-label" id="hs-score-label">—</span>
+                </div>
+              </div>
+              <div class="hs-breakdown">
+                <div class="hs-factor">
+                  <span class="hs-factor-label">Savings Rate</span>
+                  <div class="hs-factor-bar-track"><div class="hs-factor-bar" id="hf-savings" style="background:var(--success)"></div></div>
+                  <span class="hs-factor-val" id="hfv-savings" style="color:var(--success)">—</span>
+                </div>
+                <div class="hs-factor">
+                  <span class="hs-factor-label">Budget Control</span>
+                  <div class="hs-factor-bar-track"><div class="hs-factor-bar" id="hf-budget" style="background:var(--cyan)"></div></div>
+                  <span class="hs-factor-val" id="hfv-budget" style="color:var(--cyan)">—</span>
+                </div>
+                <div class="hs-factor">
+                  <span class="hs-factor-label">Emergency Fund</span>
+                  <div class="hs-factor-bar-track"><div class="hs-factor-bar" id="hf-emergency" style="background:var(--gold)"></div></div>
+                  <span class="hs-factor-val" id="hfv-emergency" style="color:var(--gold)">—</span>
+                </div>
+                <div class="hs-factor">
+                  <span class="hs-factor-label">Goal Progress</span>
+                  <div class="hs-factor-bar-track"><div class="hs-factor-bar" id="hf-goals" style="background:var(--violet)"></div></div>
+                  <span class="hs-factor-val" id="hfv-goals" style="color:var(--violet)">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Mini Cards -->
+          <div class="card stat-mini" style="--d:0.18s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-landmark"></i>Total Balance</span>
+              
+            </div>
+            <div class="stat-mini-val invest" id="sm-balance">$0</div>
+            <div class="stat-mini-sub">Across all accounts</div>
+          </div>
+
+          <div class="card stat-mini" style="--d:0.22s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-arrow-down-to-line"></i>Monthly Income</span>
+           
+            </div>
+            <div class="stat-mini-val income" id="sm-income">$0</div>
+            <div class="stat-mini-sub" id="sm-income-sub">This month</div>
+          </div>
+
+          <div class="card stat-mini" style="--d:0.26s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-arrow-up-from-line"></i>Monthly Expenses</span>
+             
+            </div>
+            <div class="stat-mini-val expense" id="sm-expenses">$0</div>
+            <div class="stat-mini-sub" id="sm-expenses-sub">This month</div>
+          </div>
+
+        </div><!-- /row-4 -->
+
+        <!-- Savings Rate Full-Width Banner -->
+        <div class="card savings-rate-banner">
+          <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-piggy-bank"></i>Savings Rate</span>
+            <span class="card-badge badge-up" id="sr-badge">Great</span>
+          </div>
+          <div class="srb-inner">
+            <div class="srb-percent" id="srb-percent">0%</div>
+            <div class="srb-bar-wrap">
+              <div class="srb-bar-track">
+                <div class="srb-bar-fill" id="srb-bar-fill"></div>
+              </div>
+              <div class="srb-bar-labels">
+                <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+              </div>
+            </div>
+            <div class="srb-saved" id="srb-saved">$0 saved this month</div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════
+             2. EXPENSE BREAKDOWN + BUDGET STATUS
+        ══════════════════════════════════ -->
+        <div class="row-2">
+
+          <!-- Expense Breakdown -->
+          <div class="card expense-breakdown-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-chart-bar"></i>Expense Breakdown</span>
+              <span class="card-badge badge-info" id="total-expense-badge">$0 total</span>
+            </div>
+            <div class="eb-chart" id="eb-chart">
+              <!-- Dynamically rendered bar chart -->
+            </div>
+          </div>
+
+          <!-- Budget Status -->
+          <div class="card budget-status-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-sliders"></i>Budget Status</span>
+              <span class="card-badge" id="budget-status-badge">Loading…</span>
+            </div>
+            <div class="bs-list" id="bs-list">
+              <!-- Dynamically rendered budget items -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ══════════════════════════════════
+             3. SAVINGS GOALS
+        ══════════════════════════════════ -->
+        <div class="card savings-goals-card">
+          <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-bullseye-arrow"></i>Savings Goals Progress</span>
+            <span class="card-badge badge-up" id="goals-summary-badge">Loading…</span>
+          </div>
+          <div class="sg-grid" id="sg-grid">
+            <!-- Dynamically rendered goal cards -->
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════
+             4. SUBSCRIPTIONS + EMERGENCY FUND
+        ══════════════════════════════════ -->
+        <div class="row-2">
+
+          <!-- Subscription Impact -->
+          <div class="card subscription-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-receipt"></i>Subscription Impact</span>
+              <span class="card-badge" id="sub-badge">Loading…</span>
+            </div>
+            <div class="sub-total-wrap">
+              <div class="sub-total-amount" id="sub-total-amount">$0</div>
+              <div class="sub-total-label">monthly subscriptions</div>
+            </div>
+            <div class="sub-warning" id="sub-warning" style="display:none">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span id="sub-warning-text"></span>
+            </div>
+            <div class="sub-list" id="sub-list">
+              <!-- Dynamically rendered subscriptions -->
+            </div>
+          </div>
+
+          <!-- Emergency Fund -->
+          <div class="card emergency-fund-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-shield-halved"></i>Emergency Fund</span>
+              <span class="card-badge" id="ef-badge">Loading…</span>
+            </div>
+            <div class="ef-body">
+              <div class="ef-ring-wrap">
+                <canvas id="efRingCanvas" width="120" height="120"></canvas>
+                <div class="ef-ring-label">
+                  <span class="ef-months" id="ef-months">0</span>
+                  <span class="ef-months-label">months</span>
+                </div>
+              </div>
+              <div class="ef-details">
+                <div class="ef-stat">
+                  <span class="ef-stat-label">Current Fund</span>
+                  <span class="ef-stat-val" id="ef-current">$0</span>
+                </div>
+                <div class="ef-stat">
+                  <span class="ef-stat-label">Monthly Expenses</span>
+                  <span class="ef-stat-val" id="ef-monthly">$0</span>
+                </div>
+                <div class="ef-stat">
+                  <span class="ef-stat-label">Target (6 mo.)</span>
+                  <span class="ef-stat-val" id="ef-target">$0</span>
+                </div>
+                <div class="ef-progress-wrap">
+                  <div class="budget-bar-track">
+                    <div class="budget-bar-fill" id="ef-bar" style="width:0%"></div>
+                  </div>
+                  <div class="ef-progress-labels">
+                    <span style="color:var(--text-500);font-size:11px;">0%</span>
+                    <span id="ef-pct-label" style="font-size:11px;font-weight:600;">0% funded</span>
+                  </div>
+                </div>
+                <div class="ef-indicator" id="ef-indicator">
+                  <i class="fa-solid fa-circle-info"></i>
+                  <span id="ef-indicator-text">Calculating…</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /row-2 -->
+
+      </div><!-- /content -->
+    </div><!-- /main-wrap -->
+  </div><!-- /dash-layout -->
+
+  <script src="health.js"></script>
+  <script src="nav-transition.js"></script>
+  <script>
+    // Particle canvas (simple dots)
+    (function() {
+      const canvas = document.getElementById('particle-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [];
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+      function init() {
+        resize();
+        particles = Array.from({length: 55}, () => ({
+          x: Math.random()*W, y: Math.random()*H,
+          r: Math.random()*1.2+0.3,
+          vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18,
+          a: Math.random()*0.35+0.05
+        }));
+      }
+      function draw() {
+        ctx.clearRect(0,0,W,H);
+        for (const p of particles) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(56,189,248,${p.a})`;
+          ctx.fill();
+          p.x += p.vx; p.y += p.vy;
+          if (p.x<0) p.x=W; if (p.x>W) p.x=0;
+          if (p.y<0) p.y=H; if (p.y>H) p.y=0;
+        }
+        requestAnimationFrame(draw);
+      }
+      window.addEventListener('resize', resize);
+      init(); draw();
+    })();
+  </script>
+</body>
+</html>

@@ -7,6 +7,272 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="dashboard.css"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       RESPONSIVE DASHBOARD STYLES
+       All breakpoints: 1280px (collapse sidebar), 900px (2-col), 600px (1-col)
+  ═══════════════════════════════════════════════════════════════════ -->
+  <style>
+    /* ── Reset / base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* ── Layout shell ─────────────────────────────────────────── */
+    .dash-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ──────────────────────────────────────────────── */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 200;
+      transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Nav items — always show icon + label */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nav-item i {
+      flex-shrink: 0;
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .nav-badge {
+      margin-left: auto;
+    }
+
+    /* ── Main wrap ────────────────────────────────────────────── */
+    .main-wrap {
+      flex: 1;
+      min-width: 0;
+      margin-left: 240px;
+      transition: margin-left 0.28s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── Content grid rows ────────────────────────────────────── */
+    .row-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .row-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .row-bottom {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* ── Topbar ───────────────────────────────────────────────── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar-toggle {
+      display: none; /* hidden on desktop */
+    }
+
+    /* ── Sidebar overlay (mobile) ─────────────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 199;
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.show {
+      display: block;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       BREAKPOINT: 1280px — narrow desktop / tablet landscape
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 1280px) {
+      .row-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .row-bottom {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .row-bottom .txn-card {
+        grid-column: 1 / -1; /* span full width */
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       BREAKPOINT: 1024px — sidebar collapses, overlay mode
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .sidebar {
+        transform: translateX(-100%);
+        box-shadow: 4px 0 32px rgba(0,0,0,0.4);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-wrap {
+        margin-left: 0;
+      }
+      .sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .topbar-title {
+        flex: 1;
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       BREAKPOINT: 900px — two columns → one column
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .row-main {
+        grid-template-columns: 1fr;
+      }
+      .row-bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       BREAKPOINT: 600px — mobile single column
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .row-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 12px !important;
+      }
+
+      .greeting h2 {
+        font-size: 1.15rem !important;
+      }
+
+      .topbar {
+        padding: 10px 14px !important;
+      }
+
+      .balance-amount {
+        font-size: clamp(1.6rem, 8vw, 2.4rem) !important;
+      }
+
+      .stat-mini-val {
+        font-size: 1.4rem !important;
+      }
+
+      .card {
+        padding: 14px !important;
+      }
+
+      /* Bills list: stack amount + days badge below name on very small screens */
+      .bill-item {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .bill-status {
+        margin-left: auto;
+      }
+
+      .txn-item {
+        gap: 8px;
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       PROFILE in topbar (shown when sidebar is hidden)
+    ══════════════════════════════════════════════════════════ */
+    .topbar-user {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    .topbar-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg,rgba(56,189,248,0.25),rgba(129,140,248,0.25));
+      border: 1px solid rgba(56,189,248,0.3);
+      color: #38bdf8;
+      flex-shrink: 0;
+    }
+    .topbar-username {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-100, #e0eeff);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+    @media (max-width: 1024px) {
+      .topbar-user {
+        display: flex;
+      }
+    }
+    @media (max-width: 400px) {
+      .topbar-username { display: none; }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SIDEBAR NAV ICON ENHANCEMENTS
+       All icons get consistent sizing, color, and hover glow
+    ══════════════════════════════════════════════════════════ */
+    .nav-item i {
+      opacity: 0.75;
+      transition: opacity 0.2s, color 0.2s, transform 0.2s;
+    }
+    .nav-item:hover i,
+    .nav-item.active i {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    .nav-item.active i {
+      color: var(--cyan, #38bdf8);
+      filter: drop-shadow(0 0 6px rgba(56,189,248,0.5));
+    }
+
+    /* Sidebar sign-out icon */
+    .sidebar-signout i {
+      opacity: 0.75;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .sidebar-signout:hover i {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+
+    /* ── Smooth page exit ─────────────────────────────────────── */
+    body.page-exit { opacity: 0; transition: opacity 0.19s; }
+  </style>
 </head>
 <body>
 
@@ -20,7 +286,7 @@
   </div>
 
   <!-- Mobile sidebar overlay -->
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+  
 
   <div class="dash-layout">
 
@@ -38,50 +304,48 @@
         <div class="sidebar-section-label">Main Menu</div>
 
         <a href="dashboard.html" class="nav-item active">
-          <i class="fa-solid fa-grid-2"></i>
+          <i class="fa-solid fa-gauge-high"></i>
           Dashboard
         </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-chart-line"></i>
-          Analytics
-          <span class="nav-badge">New</span>
+        <a href="health.html" class="nav-item">
+          <i class="fa-solid fa-heart-pulse"></i>
+          Health Score
         </a>
         <a href="transactions.html" class="nav-item">
           <i class="fa-solid fa-arrow-right-arrow-left"></i>
           Transactions
-          <span class="nav-badge red">3</span>
+          
         </a>
         <a href="budgets.html" class="nav-item">
-          <i class="fa-solid fa-sliders"></i>
+          <i class="fa-solid fa-chart-pie"></i>
           Budgets
         </a>
         <a href="savings.html" class="nav-item">
           <i class="fa-solid fa-piggy-bank"></i>
           Savings Goals
         </a>
-
-        <div class="sidebar-section-label" style="margin-top:8px;">Account</div>
-
+        <a href="emergency-fund.html" class="nav-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          Emergency Fund
+        </a>
         <a href="subscriptions.html" class="nav-item">
           <i class="fa-solid fa-receipt"></i>
           Bills &amp; Subscriptions
         </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-shield-halved"></i>
-          Security
-        </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-gear"></i>
-          Settings
+        <a href="future-projection-simulator.html" class="nav-item">
+          <i class="fa-solid fa-rocket"></i>
+           Future Simulator
         </a>
       </div>
 
       <div class="sidebar-bottom">
         <div class="sidebar-profile">
-          <div class="profile-avatar">MS</div>
+          <!-- Avatar initials — filled by renderProfile() -->
+          <div class="profile-avatar">--</div>
           <div class="profile-info">
-            <div class="profile-name">Muhammad Bin Shahid</div>
-            <div class="profile-role">Premium Member</div>
+            <!-- Full name — filled by renderProfile() -->
+            <div class="profile-name">Loading…</div>
+            <div class="profile-role">Member</div>
           </div>
           <i class="fa-solid fa-chevron-right profile-chevron"></i>
         </div>
@@ -92,6 +356,8 @@
       </div>
     </nav>
 
+<!-- Sidebar overlay — closes sidebar on mobile when clicked -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
     <!-- ═══════════════════════════════
          MAIN WRAP
     ═══════════════════════════════ -->
@@ -99,38 +365,37 @@
 
       <!-- Topbar -->
       <div class="topbar">
-        <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <!-- Hamburger — visible only on ≤1024px via CSS -->
+        <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Open menu">
           <i class="fa-solid fa-bars"></i>
         </button>
+
         <div class="topbar-title">Overview <em>Dashboard</em></div>
+
         <div class="topbar-actions">
-          <select class="topbar-select" id="date-range">
-            <option>Last 7 days</option>
-            <option selected>Last 30 days</option>
-            <option>Last 6 months</option>
-            <option>This year</option>
-          </select>
           <select class="topbar-select" id="currency">
             <option>USD</option>
           </select>
-          <button class="topbar-btn">
-            <i class="fa-solid fa-download"></i>
-            Export
-          </button>
           <div class="topbar-notif">
             <i class="fa-regular fa-bell"></i>
-            <span class="notif-dot"></span>
+           
           </div>
+        </div>
+
+        <!-- Mini user chip shown in topbar when sidebar is hidden (mobile/tablet) -->
+        <div class="topbar-user" id="topbar-user" aria-label="Signed-in user">
+          <div class="topbar-avatar" id="topbar-avatar">--</div>
+          <span class="topbar-username" id="topbar-username">Loading…</span>
         </div>
       </div>
 
       <!-- Content -->
       <div class="content">
 
-        <!-- Greeting -->
+        <!-- Greeting — name injected by renderGreeting(user) in dashboard.js -->
         <div class="greeting">
-          <h2>Good morning, <em>Muhammad</em> 👋</h2>
-          <p>Here's what's happening with your finances today — Tuesday, March 10, 2026.</p>
+          <h2>Good morning, <em id="greeting-name">there</em> 👋</h2>
+          <p id="greeting-date">Here's what's happening with your finances today.</p>
         </div>
 
         <!-- ══════════════════════════════════
@@ -142,14 +407,9 @@
           <div class="card balance-card" style="grid-column: span 1;">
             <div class="card-header">
               <span class="card-title"><i class="fa-solid fa-landmark"></i>Total Balance</span>
-              <span class="card-badge badge-up">↑ 4.2%</span>
             </div>
-            <div class="balance-amount"><span>$84,230</span>.50</div>
+            <div class="balance-amount"><span></span>.</div>
             <div class="balance-sub">Across all accounts &amp; investments</div>
-            <div class="balance-trend">
-              <i class="fa-solid fa-arrow-trend-up"></i>
-              +$3,412 this month
-            </div>
             <div class="mini-sparkline">
               <canvas id="sparkline-canvas" height="42"></canvas>
             </div>
@@ -159,20 +419,18 @@
           <div class="card stat-mini" style="--d:0.18s">
             <div class="card-header" style="padding:0;margin:0 0 2px;">
               <span class="card-title"><i class="fa-solid fa-arrow-down-to-line"></i>Monthly Income</span>
-              <span class="card-badge badge-up">↑ 8%</span>
             </div>
-            <div class="stat-mini-val income">$12,400</div>
-            <div class="stat-mini-sub">vs $11,480 last month</div>
+            <div class="stat-mini-val income"></div>
+            <div class="stat-mini-sub">vs last month</div>
           </div>
 
           <!-- Expenses -->
           <div class="card stat-mini" style="--d:0.22s">
             <div class="card-header" style="padding:0;margin:0 0 2px;">
               <span class="card-title"><i class="fa-solid fa-arrow-up-from-line"></i>Monthly Expenses</span>
-              <span class="card-badge badge-down">↑ 3%</span>
             </div>
-            <div class="stat-mini-val expense">$6,870</div>
-            <div class="stat-mini-sub">vs $6,680 last month</div>
+            <div class="stat-mini-val expense"></div>
+            <div class="stat-mini-sub">vs last month</div>
           </div>
 
           <!-- Savings Rate -->
@@ -181,14 +439,14 @@
               <span class="card-title"><i class="fa-solid fa-piggy-bank"></i>Savings Rate</span>
               <span class="card-badge badge-up">Great</span>
             </div>
-            <div class="stat-mini-val savings">44.6%</div>
-            <div class="stat-mini-sub">$5,530 saved this month</div>
+            <div class="stat-mini-val savings"></div>
+            <div class="stat-mini-sub">saved this month</div>
           </div>
 
         </div>
 
         <!-- ══════════════════════════════════
-             2. INCOME vs EXPENSES CHART
+             2. INCOME vs EXPENSES CHART + BUDGETS
         ══════════════════════════════════ -->
         <div class="row-main">
 
@@ -309,7 +567,7 @@
               <a href="subscriptions.html" class="view-all">Manage <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></a>
             </div>
 
-            <div style="margin-top:14px;">
+            <div class="bills-list" style="margin-top:14px;">
 
               <div class="bill-item">
                 <div class="bill-icon" style="background:rgba(239,68,68,0.12);color:#ef4444;">
@@ -388,7 +646,7 @@
           <div class="card health-card">
             <div class="card-header">
               <span class="card-title"><i class="fa-solid fa-heart-pulse"></i>Financial Health</span>
-              <span class="card-badge badge-up">Good</span>
+              <a href="health.html" class="view-all">Full Report <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></a>
             </div>
 
             <div class="health-score-wrap">
@@ -448,7 +706,7 @@
             </div>
           </div>
 
-          <!-- Recent Transactions — linked to transactions.html -->
+          <!-- Recent Transactions -->
           <div class="card txn-card">
             <div class="card-header">
               <span class="card-title"><i class="fa-solid fa-clock-rotate-left"></i>Recent Transactions</span>

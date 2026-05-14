@@ -169,7 +169,7 @@ const btn = document.getElementById('login-btn');
 btn.disabled = true;
 btn.innerHTML = '<span class="spinner"></span> Signing In...';
 try {
-const response = await fetch('http://127.0.0.1:5500/api/auth/login', {
+const response = await fetch('http://127.0.0.1:3000/api/auth/login', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ email, password })

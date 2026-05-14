@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinSphere — Transactions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="transactions.css"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+
+</head>
+<body>
+
+<!-- Background -->
+<canvas id="particle-canvas"></canvas>
+<div class="bg-layer">
+  <div class="bg-mesh"></div>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div class="bg-orb orb-c"></div>
+</div>
+
+<!-- Dashboard Layout -->
+<div class="dash-layout">
+
+  <!-- ── Sidebar ────────────────────────────────── -->
+<nav class="sidebar" id="sidebar">
+
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">◈</div>
+        <div class="sidebar-logo-name">Fin<em>Sphere</em></div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <a href="dashboard.html" class="nav-item">
+          <i class="fa-solid fa-gauge-high"></i>
+          Dashboard
+        </a>
+        <a href="health.html" class="nav-item ">
+          <i class="fa-solid fa-heart-pulse"></i>
+          Health Score
+        </a>
+        <a href="transactions.html" class="nav-item active">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Transactions
+        </a>
+        <a href="budgets.html" class="nav-item">
+          <i class="fa-solid fa-chart-pie"></i>
+          Budgets
+        </a>
+        <a href="savings.html" class="nav-item">
+          <i class="fa-solid fa-piggy-bank"></i>
+          Savings Goals
+        </a>
+        <a href="emergency-fund.html" class="nav-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          Emergency Fund
+        </a>
+        <a href="subscriptions.html" class="nav-item">
+          <i class="fa-solid fa-receipt"></i>
+          Bills &amp; Subscriptions
+        </a>
+        <a href="future-projection-simulator.html" class="nav-item">
+          <i class="fa-solid fa-rocket"></i>
+           Future Simulator
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-profile">
+          <!-- Avatar initials — filled by renderProfile() -->
+          <div class="profile-avatar">--</div>
+          <div class="profile-info">
+            <!-- Full name — filled by renderProfile() -->
+            <div class="profile-name">Loading…</div>
+            <div class="profile-role">Member</div>
+          </div>
+          <i class="fa-solid fa-chevron-right profile-chevron"></i>
+        </div>
+        <a href="login.html" class="sidebar-signout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Sign Out
+        </a>
+      </div>
+    </nav>
+   
+
+<!-- Sidebar overlay — closes sidebar on mobile when clicked -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- ── Main Wrap ──────────────────────────────── -->
+  <div class="main-wrap">
+
+    <!-- Top Navbar -->
+    <header class="topbar">
+      <button class="topbar-hamburger" id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
+        <i class="fa fa-bars"></i>
+      </button>
+      <span class="topbar-title">Transactions</span>
+
+      <div class="topbar-search">
+        <i class="fa fa-magnifying-glass"></i>
+        <input type="text" id="topbar-search-inp" placeholder="Search transactions…" autocomplete="off"/>
+      </div>
+
+      <div class="topbar-right">
+        <button class="topbar-icon-btn" title="Notifications">
+          <i class="fa fa-bell"></i>
+         
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Transaction <em style="font-style:italic;background:linear-gradient(135deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">History</em></h1>
+          <p>Manage and track all your financial activity in one place</p>
+        </div>
+        <button class="btn-add-txn" id="btn-add-txn">
+          <i class="fa fa-plus"></i>
+          Add Transaction
+        </button>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-header">
+            <span class="summary-card-label">Total Income</span>
+            <div class="summary-card-icon icon-income"><i class="fa fa-arrow-trend-up"></i></div>
+          </div>
+          <div class="summary-card-amount income" id="summary-income">$6.00</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-header">
+            <span class="summary-card-label">Total Expenses</span>
+            <div class="summary-card-icon icon-expense"><i class="fa fa-arrow-trend-down"></i></div>
+          </div>
+          <div class="summary-card-amount expense" id="summary-expense">$9.00</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-header">
+            <span class="summary-card-label">Net Balance</span>
+            <div class="summary-card-icon icon-balance"><i class="fa fa-scale-balanced"></i></div>
+          </div>
+          <div class="summary-card-amount balance" id="summary-balance">$41.00</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-search">
+          <i class="fa fa-magnifying-glass"></i>
+          <input type="text" id="filter-search-inp" placeholder="Search by name or description…" autocomplete="off"/>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <span class="filter-label">Type</span>
+          <select id="filter-type" class="filter-select">
+            <option value="all">All Types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Category</span>
+          <select id="filter-cat" class="filter-select">
+            <option value="all">All Categories</option>
+            <option value="salary">Salary</option>
+            <option value="freelance">Freelance</option>
+            <option value="food">Food &amp; Dining</option>
+            <option value="transport">Transport</option>
+            <option value="shopping">Shopping</option>
+            <option value="health">Health</option>
+            <option value="utilities">Utilities</option>
+            <option value="entertain">Entertainment</option>
+            <option value="travel">Travel</option>
+            <option value="other">other</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Status</span>
+          <select id="filter-status" class="filter-select">
+            <option value="all">All Status</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">From</span>
+          <input type="date" id="filter-date-from" class="filter-date-input"/>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">To</span>
+          <input type="date" id="filter-date-to" class="filter-date-input"/>
+        </div>
+
+        <button class="btn-clear-filter" id="btn-clear-filters">
+          <i class="fa fa-xmark"></i> Clear
+        </button>
+      </div>
+
+      <!-- Transaction Table Card -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <div>
+            <div class="table-card-title">All Transactions</div>
+            <div class="table-card-meta" id="pagination-meta">Loading…</div>
+          </div>
+          <div class="table-actions-right">
+            <button class="btn-export" onclick="exportCSV()">
+              <i class="fa fa-download"></i> Export CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="txn-table-wrap" id="txn-table-wrap">
+          <table class="txn-table">
+            <thead>
+              <tr>
+                <th class="sortable" data-col="date" onclick="sortByCol('date')">
+                  Date <i class="fa fa-sort sort-icon"></i>
+                </th>
+                <th class="sortable" data-col="merchant" onclick="sortByCol('merchant')">
+                  Description <i class="fa fa-sort sort-icon"></i>
+                </th>
+                <th>Category</th>
+                <th class="sortable" data-col="amount" onclick="sortByCol('amount')" style="text-align:right;">
+                  Amount <i class="fa fa-sort sort-icon"></i>
+                </th>
+                <th>Status</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="txn-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display:none">
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title">No transactions found</div>
+          <div class="empty-sub">Try adjusting your filters or search query, or add a new transaction to get started.</div>
+          <button class="btn-add-txn" onclick="document.getElementById('btn-add-txn').click()">
+            <i class="fa fa-plus"></i> Add Transaction
+          </button>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+          <div class="pagination-meta" id="pagination-meta-bottom"></div>
+          <div class="pagination-btns" id="pagination-btns"></div>
+        </div>
+      </div>
+
+    </main><!-- /page-content -->
+  </div><!-- /main-wrap -->
+</div><!-- /dash-layout -->
+
+
+<!-- ══ ADD / EDIT TRANSACTION MODAL ══════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Add Transaction</span>
+      <button class="modal-close" id="modal-close"><i class="fa fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="modal-form" novalidate>
+        <input type="hidden" id="modal-type-input" value="expense"/>
+
+        <!-- Type Toggle -->
+        <div class="type-toggle">
+          <label class="type-opt" data-value="income">
+            <input type="radio" name="txn-type" value="income"/>
+            <i class="fa fa-arrow-trend-up"></i> Income
+          </label>
+          <label class="type-opt selected-expense" data-value="expense">
+            <input type="radio" name="txn-type" value="expense"/>
+            <i class="fa fa-arrow-trend-down"></i> Expense
+          </label>
+        </div>
+
+        <!-- Title & Amount -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="modal-merchant">Merchant / Title *</label>
+            <input type="text" id="modal-merchant" class="form-control" placeholder="e.g. Amazon, Salary…" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="modal-amount">Amount (USD) *</label>
+            <input type="number" id="modal-amount" class="form-control" placeholder="0.00" min="0" step="0.01" required/>
+          </div>
+        </div>
+
+        <!-- Category & Date -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="modal-category">Category</label>
+            <select id="modal-category" class="form-control">
+              <option value="salary">💼 Salary</option>
+              <option value="freelance">💻 Freelance</option>
+              <option value="investment">📈 Investment</option>
+              <option value="food">🍽️ Food &amp; Dining</option>
+              <option value="transport">🚗 Transport</option>
+              <option value="shopping">🛍️ Shopping</option>
+              <option value="health">🏥 Health</option>
+              <option value="utilities">⚡ Utilities</option>
+              <option value="entertain">🎬 Entertainment</option>
+              <option value="travel">✈️ Travel</option>
+              <option value="other">other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="modal-date">Date *</label>
+            <input type="date" id="modal-date" class="form-control" required/>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+          <label class="form-label" for="modal-status">Status</label>
+          <select id="modal-status" class="form-control">
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <label class="form-label" for="modal-desc">Notes (optional)</label>
+          <textarea id="modal-desc" class="form-control" placeholder="Add a short description…"></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" id="modal-cancel">Cancel</button>
+      <button class="btn-modal-submit" id="modal-submit-btn" >
+        Add Transaction
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ DELETE CONFIRM MODAL ══════════════════════════════════════ -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="modal confirm-modal">
+    <div class="modal-body" style="padding:28px 26px 24px;">
+      <div class="confirm-icon">🗑️</div>
+      <div class="confirm-title">Delete Transaction?</div>
+      <p class="confirm-sub">This action cannot be undone. The transaction will be permanently removed from your records.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" id="confirm-cancel">Cancel</button>
+      <button class="btn-modal-delete" id="confirm-delete">
+        <i class="fa fa-trash" style="margin-right:6px;"></i>Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="transactions.js"></script>
+<script src="nav-transition.js"></script>
+</body>
+</html>

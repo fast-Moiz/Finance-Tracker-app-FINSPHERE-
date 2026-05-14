@@ -7,149 +7,211 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="transactions.css"/>
   <link rel="stylesheet" href="budgets.css"/>
+  <link rel="stylesheet" href="dashboard.css"/>
 </head>
 <body>
-  <canvas id="particle-canvas"></canvas>
-  <div class="bg-layer">
-    <div class="bg-mesh"></div><div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div><div class="bg-orb orb-c"></div>
-  </div>
 
-  <div class="dash-layout">
+<canvas id="particle-canvas"></canvas>
+<div class="bg-layer">
+  <div class="bg-mesh"></div>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div class="bg-orb orb-c"></div>
+</div>
 
-    <aside class="sidebar" id="sidebar">
+<div class="dash-layout">
+
+  <!-- ── Sidebar ──────────────────────────────────────────── -->
+  <nav class="sidebar" id="sidebar">
+
       <div class="sidebar-logo">
         <div class="sidebar-logo-icon">◈</div>
-        <span class="sidebar-logo-name">Fin<em>Sphere</em></span>
+        <div class="sidebar-logo-name">Fin<em>Sphere</em></div>
       </div>
 
       <div class="sidebar-nav">
         <div class="sidebar-section-label">Main Menu</div>
 
         <a href="dashboard.html" class="nav-item">
-          <i class="fa-solid fa-grid-2"></i> Dashboard
+          <i class="fa-solid fa-gauge-high"></i>
+          Dashboard
         </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-chart-line"></i> Analytics
-          <span class="nav-badge">New</span>
+        <a href="health.html" class="nav-item ">
+          <i class="fa-solid fa-heart-pulse"></i>
+          Health Score
         </a>
         <a href="transactions.html" class="nav-item">
-          <i class="fa-solid fa-arrow-right-arrow-left"></i> Transactions
-          <span class="nav-badge red">3</span>
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Transactionsx
         </a>
         <a href="budgets.html" class="nav-item active">
-          <i class="fa-solid fa-sliders"></i> Budgets
+          <i class="fa-solid fa-chart-pie"></i>
+          Budgets
         </a>
         <a href="savings.html" class="nav-item">
-          <i class="fa-solid fa-piggy-bank"></i> Savings Goals
+          <i class="fa-solid fa-piggy-bank"></i>
+          Savings Goals
         </a>
-
-        <div class="sidebar-section-label" style="margin-top:8px;">Account</div>
-
+        <a href="emergency-fund.html" class="nav-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          Emergency Fund
+        </a>
         <a href="subscriptions.html" class="nav-item">
-          <i class="fa-solid fa-receipt"></i> Bills &amp; Subscriptions
+          <i class="fa-solid fa-receipt"></i>
+          Bills &amp; Subscriptions
         </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-shield-halved"></i> Security
-        </a>
-        <a href="#" class="nav-item">
-          <i class="fa-solid fa-gear"></i> Settings
+        <a href="future-projection-simulator.html" class="nav-item">
+          <i class="fa-solid fa-rocket"></i>
+           Future Simulator
         </a>
       </div>
 
       <div class="sidebar-bottom">
         <div class="sidebar-profile">
-          <div class="profile-avatar">MS</div>
+          <!-- Avatar initials — filled by renderProfile() -->
+          <div class="profile-avatar">--</div>
           <div class="profile-info">
-            <div class="profile-name">Muhammad Bin Shahid</div>
-            <div class="profile-role">Premium Member</div>
+            <!-- Full name — filled by renderProfile() -->
+            <div class="profile-name">Loading…</div>
+            <div class="profile-role">Member</div>
           </div>
           <i class="fa-solid fa-chevron-right profile-chevron"></i>
         </div>
         <a href="login.html" class="sidebar-signout">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Sign Out
         </a>
       </div>
-    </aside>
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    </nav>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <div class="main-wrap">
-      <header class="topbar">
-        <button class="topbar-hamburger" id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
-          <i class="fa fa-bars"></i>
+  <!-- ── Main Wrap ────────────────────────────────────────── -->
+  <div class="main-wrap">
+    <header class="topbar">
+      <button class="topbar-hamburger" id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
+        <i class="fa fa-bars"></i>
+      </button>
+      <span class="topbar-title">Budget <em>Planner</em></span>
+      <div class="topbar-right">
+        <button class="topbar-icon-btn" title="Notifications">
+          <i class="fa fa-bell"></i>
         </button>
-        <span class="topbar-title">Budget <em>Planner</em></span>
-      </header>
+       
+      </div>
+    </header>
 
-      <main class="page-content">
-        <div class="page-header">
-          <div class="page-header-left">
-            <h1>Monthly <em style="font-style:italic;background:linear-gradient(135deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Budgets</em></h1>
-            <p>Set category limits and track your spending to stay on top of your finances.</p>
+    <main class="page-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Monthly
+            <em style="font-style:italic;background:linear-gradient(135deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Budgets</em>
+          </h1>
+          <p>Set category limits and track your spending in real time.</p>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <!-- Month Picker -->
+          <div class="filter-group">
+            <span class="filter-label">Month</span>
+            <input type="month" id="month-picker" class="filter-date-input" style="padding:8px 12px;"/>
           </div>
-          <button class="btn-add-txn" onclick="openBudgetModal()">
+          <button class="btn-add-txn" onclick="openAddModal()">
             <i class="fa fa-plus"></i> Create Budget
           </button>
         </div>
+      </div>
 
-        <div class="summary-grid">
-          <div class="summary-card">
-            <div class="summary-card-header">
-              <span class="summary-card-label">Total Budgeted</span>
-              <div class="summary-card-icon icon-balance"><i class="fa fa-wallet"></i></div>
-            </div>
-            <div class="summary-card-amount balance" id="total-budget">$0.00</div>
+      <!-- Summary Cards -->
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-header">
+            <span class="summary-card-label">Total Budgeted</span>
+            <div class="summary-card-icon icon-balance"><i class="fa fa-wallet"></i></div>
           </div>
-          <div class="summary-card">
-            <div class="summary-card-header">
-              <span class="summary-card-label">Total Spent</span>
-              <div class="summary-card-icon icon-expense"><i class="fa fa-arrow-trend-down"></i></div>
-            </div>
-            <div class="summary-card-amount expense" id="total-spent">$0.00</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-card-header">
-              <span class="summary-card-label">Remaining</span>
-              <div class="summary-card-icon icon-income"><i class="fa fa-piggy-bank"></i></div>
-            </div>
-            <div class="summary-card-amount income" id="total-remaining">$0.00</div>
-          </div>
+          <div class="summary-card-amount balance" id="total-budget">$0.00</div>
+          <div class="summary-card-sub">across all categories</div>
         </div>
+        <div class="summary-card">
+          <div class="summary-card-header">
+            <span class="summary-card-label">Total Spent</span>
+            <div class="summary-card-icon icon-expense"><i class="fa fa-arrow-trend-down"></i></div>
+          </div>
+          <div class="summary-card-amount expense" id="total-spent">$0.00</div>
+          <div class="summary-card-sub">from your transactions</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-header">
+            <span class="summary-card-label">Remaining</span>
+            <div class="summary-card-icon icon-income"><i class="fa fa-piggy-bank"></i></div>
+          </div>
+          <div class="summary-card-amount income" id="total-remaining">$0.00</div>
+          <div class="summary-card-sub">left to spend</div>
+        </div>
+      </div>
 
-        <div class="budget-grid" id="budget-container"></div>
-      </main>
+      <!-- Budget Cards Grid -->
+      <div class="budget-grid" id="budget-container"></div>
+
+    </main>
+  </div>
+</div>
+
+
+<!-- ══ ADD / EDIT BUDGET MODAL ═══════════════════════════════ -->
+<div class="modal-overlay" id="budget-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Create Budget</span>
+      <button class="modal-close" onclick="closeBudgetModal()"><i class="fa fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select id="b-category" class="form-control">
+          <option value="food">🍽️ Food &amp; Dining</option>
+          <option value="transport">🚗 Transport</option>
+          <option value="shopping">🛍️ Shopping</option>
+          <option value="health">🏥 Health</option>
+          <option value="utilities">⚡ Utilities</option>
+          <option value="entertain">🎬 Entertainment</option>
+          <option value="travel">✈️ Travel</option>
+          <option value="other">📦 Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Monthly Limit (USD) *</label>
+        <input type="number" id="b-limit" class="form-control" placeholder="e.g. 500" min="1" step="0.01"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeBudgetModal()">Cancel</button>
+      <button class="btn-modal-submit" id="modal-submit-btn" onclick="saveBudget()">Create Budget</button>
     </div>
   </div>
+</div>
 
-  <div class="modal-overlay" id="budget-modal">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">Set Budget</span>
-        <button class="modal-close" onclick="closeBudgetModal()"><i class="fa fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <form id="budget-form">
-          <div class="form-group">
-            <label class="form-label">Category</label>
-            <select id="b-category" class="form-control">
-              <option value="Housing">🏠 Housing</option>
-              <option value="Food">🍔 Food &amp; Dining</option>
-              <option value="Transport">🚗 Transport</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Monthly Limit (USD)</label>
-            <input type="number" id="b-limit" class="form-control" required/>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-modal-cancel" onclick="closeBudgetModal()">Cancel</button>
-        <button class="btn-modal-submit" onclick="saveBudget()">Save Budget</button>
-      </div>
+
+<!-- ══ DELETE CONFIRM MODAL ══════════════════════════════════ -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="modal confirm-modal">
+    <div class="modal-body" style="padding:28px 26px 24px;">
+      <div class="confirm-icon">🗑️</div>
+      <div class="confirm-title">Delete Budget?</div>
+      <p class="confirm-sub">This budget will be permanently removed. Your transactions won't be affected.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-modal-delete" id="confirm-delete" onclick="executeDelete()">
+        <i class="fa fa-trash" style="margin-right:6px;"></i>Delete
+      </button>
     </div>
   </div>
+</div>
 
-  <script src="budgets.js"></script>
-  <script src="nav-transition.js"></script>
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="budgets.js"></script>
 </body>
 </html>

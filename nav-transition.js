@@ -1,5 +1,6 @@
 /* ─── FinSphere — Shared Navigation & Transition ─── */
-
+document.getElementById('sidebar-overlay').classList.remove('show');
+document.getElementById('sidebar').classList.remove('open');
 /* Sidebar toggle (mobile) */
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');

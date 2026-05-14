@@ -353,14 +353,14 @@ function initLogin() {
       setFieldState(pass, passMsg, 'Password is too short', 'error'); valid = false;
     }
 
-    // if (!valid) return;
+    if (!valid) return;
 
-    // // Simulate API call
-    // setLoading('login-btn', true, 'Sign In');
-    // setTimeout(() => {
-    //   setLoading('login-btn', false, 'Sign In');
-    //   showToast('Welcome Back!', 'You\'ve signed in to FinSphere. Redirecting to your dashboard…', 'success');
-    // }, 1900);
+    // Simulate API call
+    setLoading('login-btn', true, 'Sign In');
+    setTimeout(() => {
+      setLoading('login-btn', false, 'Sign In');
+      
+    }, 1900);
   });
 }
 
@@ -449,7 +449,7 @@ function initSignup()
     setTimeout(() => {
       setLoading('signup-btn', false, 'Create Account');
       // Account created — redirect to login page
-      window.location.href = 'login.html';
+      window.location.href = 'dashboard.html';
     }, 2100);
   });
 }
