@@ -1,0 +1,9 @@
+/* Subscriptions Specific Styles */
+.leakage-banner {
+  background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+  padding: 16px 20px; border-radius: 12px; display: flex; align-items: center; gap: 16px;
+  color: var(--gold); margin-bottom: 24px; animation: fadeUp 0.5s var(--ease-out) both;
+}
+.sub-name { font-weight: 600; color: var(--text-100); }
+.sub-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); }
+.status-unused { background: rgba(244,63,94,0.1); color: var(--error); border: 1px solid rgba(244,63,94,0.2); }

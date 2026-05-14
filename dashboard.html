@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinSphere — Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="dashboard.css"/>
+</head>
+<body>
+
+  <!-- Background -->
+  <canvas id="particle-canvas"></canvas>
+  <div class="bg-layer">
+    <div class="bg-mesh"></div>
+    <div class="orb-a bg-orb"></div>
+    <div class="orb-b bg-orb"></div>
+    <div class="orb-c bg-orb"></div>
+  </div>
+
+  <!-- Mobile sidebar overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="dash-layout">
+
+    <!-- ═══════════════════════════════
+         SIDEBAR
+    ═══════════════════════════════ -->
+    <nav class="sidebar" id="sidebar">
+
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">◈</div>
+        <div class="sidebar-logo-name">Fin<em>Sphere</em></div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <a href="dashboard.html" class="nav-item active">
+          <i class="fa-solid fa-grid-2"></i>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-chart-line"></i>
+          Analytics
+          <span class="nav-badge">New</span>
+        </a>
+        <a href="transactions.html" class="nav-item">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Transactions
+          <span class="nav-badge red">3</span>
+        </a>
+        <a href="budgets.html" class="nav-item">
+          <i class="fa-solid fa-sliders"></i>
+          Budgets
+        </a>
+        <a href="savings.html" class="nav-item">
+          <i class="fa-solid fa-piggy-bank"></i>
+          Savings Goals
+        </a>
+
+        <div class="sidebar-section-label" style="margin-top:8px;">Account</div>
+
+        <a href="subscriptions.html" class="nav-item">
+          <i class="fa-solid fa-receipt"></i>
+          Bills &amp; Subscriptions
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          Security
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-gear"></i>
+          Settings
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-profile">
+          <div class="profile-avatar">MS</div>
+          <div class="profile-info">
+            <div class="profile-name">Muhammad Bin Shahid</div>
+            <div class="profile-role">Premium Member</div>
+          </div>
+          <i class="fa-solid fa-chevron-right profile-chevron"></i>
+        </div>
+        <a href="login.html" class="sidebar-signout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Sign Out
+        </a>
+      </div>
+    </nav>
+
+    <!-- ═══════════════════════════════
+         MAIN WRAP
+    ═══════════════════════════════ -->
+    <div class="main-wrap">
+
+      <!-- Topbar -->
+      <div class="topbar">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="topbar-title">Overview <em>Dashboard</em></div>
+        <div class="topbar-actions">
+          <select class="topbar-select" id="date-range">
+            <option>Last 7 days</option>
+            <option selected>Last 30 days</option>
+            <option>Last 6 months</option>
+            <option>This year</option>
+          </select>
+          <select class="topbar-select" id="currency">
+            <option>USD</option>
+          </select>
+          <button class="topbar-btn">
+            <i class="fa-solid fa-download"></i>
+            Export
+          </button>
+          <div class="topbar-notif">
+            <i class="fa-regular fa-bell"></i>
+            <span class="notif-dot"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+
+        <!-- Greeting -->
+        <div class="greeting">
+          <h2>Good morning, <em>Muhammad</em> 👋</h2>
+          <p>Here's what's happening with your finances today — Tuesday, March 10, 2026.</p>
+        </div>
+
+        <!-- ══════════════════════════════════
+             1. TOTAL BALANCE + MINI STATS
+        ══════════════════════════════════ -->
+        <div class="row-4">
+
+          <!-- Total Balance -->
+          <div class="card balance-card" style="grid-column: span 1;">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-landmark"></i>Total Balance</span>
+              <span class="card-badge badge-up">↑ 4.2%</span>
+            </div>
+            <div class="balance-amount"><span>$84,230</span>.50</div>
+            <div class="balance-sub">Across all accounts &amp; investments</div>
+            <div class="balance-trend">
+              <i class="fa-solid fa-arrow-trend-up"></i>
+              +$3,412 this month
+            </div>
+            <div class="mini-sparkline">
+              <canvas id="sparkline-canvas" height="42"></canvas>
+            </div>
+          </div>
+
+          <!-- Income -->
+          <div class="card stat-mini" style="--d:0.18s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-arrow-down-to-line"></i>Monthly Income</span>
+              <span class="card-badge badge-up">↑ 8%</span>
+            </div>
+            <div class="stat-mini-val income">$12,400</div>
+            <div class="stat-mini-sub">vs $11,480 last month</div>
+          </div>
+
+          <!-- Expenses -->
+          <div class="card stat-mini" style="--d:0.22s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-arrow-up-from-line"></i>Monthly Expenses</span>
+              <span class="card-badge badge-down">↑ 3%</span>
+            </div>
+            <div class="stat-mini-val expense">$6,870</div>
+            <div class="stat-mini-sub">vs $6,680 last month</div>
+          </div>
+
+          <!-- Savings Rate -->
+          <div class="card stat-mini" style="--d:0.26s">
+            <div class="card-header" style="padding:0;margin:0 0 2px;">
+              <span class="card-title"><i class="fa-solid fa-piggy-bank"></i>Savings Rate</span>
+              <span class="card-badge badge-up">Great</span>
+            </div>
+            <div class="stat-mini-val savings">44.6%</div>
+            <div class="stat-mini-sub">$5,530 saved this month</div>
+          </div>
+
+        </div>
+
+        <!-- ══════════════════════════════════
+             2. INCOME vs EXPENSES CHART
+        ══════════════════════════════════ -->
+        <div class="row-main">
+
+          <div class="card chart-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-chart-column"></i>Income vs Expenses</span>
+              <span class="card-badge badge-info">Last 6 Months</span>
+            </div>
+            <canvas id="incomeExpenseChart" height="200" style="margin-top:16px;"></canvas>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--success);"></div>Income</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--error);"></div>Expenses</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--cyan);opacity:0.5;"></div>Net Savings</div>
+            </div>
+          </div>
+
+          <!-- Budget Usage -->
+          <div class="card budget-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-sliders"></i>Budget Usage</span>
+              <a href="budgets.html" class="view-all">View all <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></a>
+            </div>
+
+            <div style="margin-top:16px;">
+
+              <div class="budget-item">
+                <div class="budget-label-row">
+                  <div class="budget-name">
+                    <div class="budget-icon" style="background:rgba(239,68,68,0.12);color:#ef4444;">🍔</div>
+                    Food &amp; Dining
+                  </div>
+                  <span class="budget-pct">82% <span style="color:var(--error);font-size:10px;">▲</span></span>
+                </div>
+                <div class="budget-bar-track">
+                  <div class="budget-bar-fill" style="width:82%;background:linear-gradient(90deg,#ef4444,#f97316);"></div>
+                </div>
+              </div>
+
+              <div class="budget-item">
+                <div class="budget-label-row">
+                  <div class="budget-name">
+                    <div class="budget-icon" style="background:rgba(56,189,248,0.12);color:var(--cyan);">🏠</div>
+                    Housing
+                  </div>
+                  <span class="budget-pct">65%</span>
+                </div>
+                <div class="budget-bar-track">
+                  <div class="budget-bar-fill" style="width:65%;background:linear-gradient(90deg,var(--cyan),var(--violet));"></div>
+                </div>
+              </div>
+
+              <div class="budget-item">
+                <div class="budget-label-row">
+                  <div class="budget-name">
+                    <div class="budget-icon" style="background:rgba(129,140,248,0.12);color:var(--violet);">🚗</div>
+                    Transport
+                  </div>
+                  <span class="budget-pct">91% <span style="color:var(--error);font-size:10px;">▲</span></span>
+                </div>
+                <div class="budget-bar-track">
+                  <div class="budget-bar-fill" style="width:91%;background:linear-gradient(90deg,var(--error),#f97316);"></div>
+                </div>
+              </div>
+
+              <div class="budget-item">
+                <div class="budget-label-row">
+                  <div class="budget-name">
+                    <div class="budget-icon" style="background:rgba(16,185,129,0.12);color:var(--success);">💊</div>
+                    Healthcare
+                  </div>
+                  <span class="budget-pct">28%</span>
+                </div>
+                <div class="budget-bar-track">
+                  <div class="budget-bar-fill" style="width:28%;background:linear-gradient(90deg,var(--success),var(--cyan));"></div>
+                </div>
+              </div>
+
+              <div class="budget-item">
+                <div class="budget-label-row">
+                  <div class="budget-name">
+                    <div class="budget-icon" style="background:rgba(245,158,11,0.12);color:var(--gold);">🎭</div>
+                    Entertainment
+                  </div>
+                  <span class="budget-pct">57%</span>
+                </div>
+                <div class="budget-bar-track">
+                  <div class="budget-bar-fill" style="width:57%;background:linear-gradient(90deg,var(--gold),#f97316);"></div>
+                </div>
+              </div>
+
+              <div class="budget-item">
+                <div class="budget-label-row">
+                  <div class="budget-name">
+                    <div class="budget-icon" style="background:rgba(56,189,248,0.12);color:var(--cyan);">📱</div>
+                    Subscriptions
+                  </div>
+                  <span class="budget-pct">74% <span style="color:var(--warning);font-size:10px;">▲</span></span>
+                </div>
+                <div class="budget-bar-track">
+                  <div class="budget-bar-fill" style="width:74%;background:linear-gradient(90deg,var(--warning),var(--gold));"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ══════════════════════════════════
+             3. BILLS + HEALTH + TRANSACTIONS
+        ══════════════════════════════════ -->
+        <div class="row-bottom">
+
+          <!-- Upcoming Bills -->
+          <div class="card bills-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-calendar-days"></i>Upcoming Bills</span>
+              <a href="subscriptions.html" class="view-all">Manage <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></a>
+            </div>
+
+            <div style="margin-top:14px;">
+
+              <div class="bill-item">
+                <div class="bill-icon" style="background:rgba(239,68,68,0.12);color:#ef4444;">
+                  <i class="fa-brands fa-netflix" style="font-size:16px;"></i>
+                </div>
+                <div class="bill-info">
+                  <div class="bill-name">Netflix Premium</div>
+                  <div class="bill-date">Due Mar 12</div>
+                </div>
+                <div>
+                  <div class="bill-amount">$22.99</div>
+                </div>
+                <span class="bill-status" style="background:rgba(244,63,94,0.1);color:var(--error);border:1px solid rgba(244,63,94,0.2);">2 days</span>
+              </div>
+
+              <div class="bill-item">
+                <div class="bill-icon" style="background:rgba(56,189,248,0.12);color:var(--cyan);">
+                  <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="bill-info">
+                  <div class="bill-name">Electricity Bill</div>
+                  <div class="bill-date">Due Mar 15</div>
+                </div>
+                <div>
+                  <div class="bill-amount">$148.00</div>
+                </div>
+                <span class="bill-status" style="background:rgba(245,158,11,0.1);color:var(--gold);border:1px solid rgba(245,158,11,0.2);">5 days</span>
+              </div>
+
+              <div class="bill-item">
+                <div class="bill-icon" style="background:rgba(129,140,248,0.12);color:var(--violet);">
+                  <i class="fa-solid fa-house"></i>
+                </div>
+                <div class="bill-info">
+                  <div class="bill-name">Rent Payment</div>
+                  <div class="bill-date">Due Mar 18</div>
+                </div>
+                <div>
+                  <div class="bill-amount">$2,100.00</div>
+                </div>
+                <span class="bill-status" style="background:rgba(16,185,129,0.1);color:var(--success);border:1px solid rgba(16,185,129,0.2);">8 days</span>
+              </div>
+
+              <div class="bill-item">
+                <div class="bill-icon" style="background:rgba(245,158,11,0.12);color:var(--gold);">
+                  <i class="fa-solid fa-wifi"></i>
+                </div>
+                <div class="bill-info">
+                  <div class="bill-name">Internet &amp; Cable</div>
+                  <div class="bill-date">Due Mar 20</div>
+                </div>
+                <div>
+                  <div class="bill-amount">$89.99</div>
+                </div>
+                <span class="bill-status" style="background:rgba(16,185,129,0.1);color:var(--success);border:1px solid rgba(16,185,129,0.2);">10 days</span>
+              </div>
+
+              <div class="bill-item">
+                <div class="bill-icon" style="background:rgba(16,185,129,0.1);color:var(--success);">
+                  <i class="fa-solid fa-dumbbell"></i>
+                </div>
+                <div class="bill-info">
+                  <div class="bill-name">Gym Membership</div>
+                  <div class="bill-date">Due Mar 25</div>
+                </div>
+                <div>
+                  <div class="bill-amount">$49.00</div>
+                </div>
+                <span class="bill-status" style="background:rgba(56,189,248,0.08);color:var(--cyan);border:1px solid rgba(56,189,248,0.15);">15 days</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Financial Health Score -->
+          <div class="card health-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-heart-pulse"></i>Financial Health</span>
+              <span class="card-badge badge-up">Good</span>
+            </div>
+
+            <div class="health-score-wrap">
+              <div class="health-gauge">
+                <canvas id="gaugeChart" width="110" height="110"></canvas>
+                <div class="health-gauge-label">
+                  <span class="gauge-score">78</span>
+                  <span class="gauge-label">/ 100</span>
+                </div>
+              </div>
+
+              <div class="health-metrics">
+                <div class="health-metric">
+                  <div class="hm-icon" style="background:rgba(16,185,129,0.1);color:var(--success);"><i class="fa-solid fa-piggy-bank"></i></div>
+                  <div class="hm-info">
+                    <div class="hm-label">Savings Rate</div>
+                    <div class="hm-bar-track"><div class="hm-bar-fill" style="width:85%;background:var(--success);"></div></div>
+                  </div>
+                  <span class="hm-val" style="color:var(--success);">85%</span>
+                </div>
+                <div class="health-metric">
+                  <div class="hm-icon" style="background:rgba(56,189,248,0.1);color:var(--cyan);"><i class="fa-solid fa-credit-card"></i></div>
+                  <div class="hm-info">
+                    <div class="hm-label">Debt Ratio</div>
+                    <div class="hm-bar-track"><div class="hm-bar-fill" style="width:32%;background:var(--cyan);"></div></div>
+                  </div>
+                  <span class="hm-val" style="color:var(--cyan);">32%</span>
+                </div>
+                <div class="health-metric">
+                  <div class="hm-icon" style="background:rgba(245,158,11,0.1);color:var(--gold);"><i class="fa-solid fa-shield"></i></div>
+                  <div class="hm-info">
+                    <div class="hm-label">Emergency Fund</div>
+                    <div class="hm-bar-track"><div class="hm-bar-fill" style="width:68%;background:var(--gold);"></div></div>
+                  </div>
+                  <span class="hm-val" style="color:var(--gold);">68%</span>
+                </div>
+                <div class="health-metric">
+                  <div class="hm-icon" style="background:rgba(129,140,248,0.1);color:var(--violet);"><i class="fa-solid fa-chart-pie"></i></div>
+                  <div class="hm-info">
+                    <div class="hm-label">Invest. Diversity</div>
+                    <div class="hm-bar-track"><div class="hm-bar-fill" style="width:72%;background:var(--violet);"></div></div>
+                  </div>
+                  <span class="hm-val" style="color:var(--violet);">72%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="health-tips">
+              <div class="health-tip">
+                <i class="fa-solid fa-circle-check" style="color:var(--success);"></i>
+                Emergency fund covers 3.4 months of expenses — keep building to reach 6 months.
+              </div>
+              <div class="health-tip">
+                <i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);"></i>
+                Transport budget is at 91%. Consider carpooling or public transit to stay on track.
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Transactions — linked to transactions.html -->
+          <div class="card txn-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-clock-rotate-left"></i>Recent Transactions</span>
+              <a href="transactions.html" class="view-all">View all <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></a>
+            </div>
+            <div style="margin-top:10px;">
+
+              <div class="txn-item">
+                <div class="txn-icon" style="background:rgba(56,189,248,0.1);color:var(--cyan);">💰</div>
+                <div class="txn-info">
+                  <div class="txn-name">Salary Deposit</div>
+                  <div class="txn-cat">Income</div>
+                </div>
+                <div>
+                  <div class="txn-amount pos">+$6,200</div>
+                  <div class="txn-date">Mar 10</div>
+                </div>
+              </div>
+
+              <div class="txn-item">
+                <div class="txn-icon" style="background:rgba(239,68,68,0.1);color:#ef4444;">🛒</div>
+                <div class="txn-info">
+                  <div class="txn-name">Whole Foods Market</div>
+                  <div class="txn-cat">Groceries</div>
+                </div>
+                <div>
+                  <div class="txn-amount neg">−$124.50</div>
+                  <div class="txn-date">Mar 9</div>
+                </div>
+              </div>
+
+              <div class="txn-item">
+                <div class="txn-icon" style="background:rgba(129,140,248,0.1);color:var(--violet);">✈️</div>
+                <div class="txn-info">
+                  <div class="txn-name">United Airlines</div>
+                  <div class="txn-cat">Travel</div>
+                </div>
+                <div>
+                  <div class="txn-amount neg">−$340.00</div>
+                  <div class="txn-date">Mar 8</div>
+                </div>
+              </div>
+
+              <div class="txn-item">
+                <div class="txn-icon" style="background:rgba(16,185,129,0.1);color:var(--success);">📈</div>
+                <div class="txn-info">
+                  <div class="txn-name">Dividend Payment</div>
+                  <div class="txn-cat">Investment</div>
+                </div>
+                <div>
+                  <div class="txn-amount pos">+$212.00</div>
+                  <div class="txn-date">Mar 7</div>
+                </div>
+              </div>
+
+              <div class="txn-item">
+                <div class="txn-icon" style="background:rgba(245,158,11,0.1);color:var(--gold);">☕</div>
+                <div class="txn-info">
+                  <div class="txn-name">Starbucks</div>
+                  <div class="txn-cat">Food &amp; Dining</div>
+                </div>
+                <div>
+                  <div class="txn-amount neg">−$18.40</div>
+                  <div class="txn-date">Mar 7</div>
+                </div>
+              </div>
+
+              <div class="txn-item">
+                <div class="txn-icon" style="background:rgba(56,189,248,0.1);color:var(--cyan);">🎓</div>
+                <div class="txn-info">
+                  <div class="txn-name">Freelance Project</div>
+                  <div class="txn-cat">Income</div>
+                </div>
+                <div>
+                  <div class="txn-amount pos">+$850.00</div>
+                  <div class="txn-date">Mar 5</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /row-bottom -->
+
+      </div><!-- /content -->
+    </div><!-- /main-wrap -->
+  </div><!-- /dash-layout -->
+
+  <script src="dashboard.js"></script>
+  <script src="nav-transition.js"></script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinSphere — Sign In</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { animation: fadeIn 0.5s ease both; }
+  </style>
+</head>
+<body>
+
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="bg-layer">
+    <div class="bg-mesh"></div>
+    <div class="orb-a bg-orb"></div>
+    <div class="orb-b bg-orb"></div>
+    <div class="orb-c bg-orb"></div>
+    <div class="data-lines"></div>
+  </div>
+
+  <div class="auth-layout">
+
+    <!-- ── LEFT: Brand panel ── -->
+    <aside class="brand-panel">
+      <div class="brand-top">
+
+        <div class="logo">
+          <div class="logo-icon">◈</div>
+          <div class="logo-text">
+            <span class="logo-name">Fin<em>Sphere</em></span>
+            <span class="logo-tagline">Smart Finance Platform</span>
+          </div>
+        </div>
+
+        <div class="brand-hero">
+          <h2>
+            Your money,<br/>
+            <em>smartly</em><br/>
+            managed.
+          </h2>
+          <p>
+            FinSphere helps you track expenses, manage budgets, and understand your financial habits.
+            Get real-time insights, detailed reports, and complete control — all in one place.
+          </p>
+
+          <div class="ticker-wrap">
+            <div class="ticker">
+              <span class="ticker-item"><span class="ticker-dot"></span>Welcome to FinSphere – Smart Personal Finance Tracker</span>
+
+              <span class="ticker-item"><span class="ticker-dot"></span>Track Income & Expenses Easily</span>
+
+              <span class="ticker-item"><span class="ticker-dot"></span>Manage Monthly Budgets Effectively</span>
+
+              <span class="ticker-item"><span class="ticker-dot"></span>Analyze Spending Patterns</span>
+
+              <span class="ticker-item"><span class="ticker-dot"></span>Set & Achieve Savings Goals</span>
+
+              <span class="ticker-item"><span class="ticker-dot"></span>Monitor Subscriptions & Bills</span>
+
+              <span class="ticker-item"><span class="ticker-dot"></span>View Financial Health Score</span>
+
+              <span class="ticker-item"><span class="ticker-dot"></span>Plan Future Finances with Projections</span>
+
+              <span class="ticker-item"><span class="ticker-dot"></span>Build Emergency Fund Readiness</span>
+
+                <!-- repeat for smooth animation -->
+                <span class="ticker-item"><span class="ticker-dot"></span>Welcome to FinSphere – Smart Personal Finance Tracker</span>
+                <span class="ticker-item"><span class="ticker-dot"></span>Track Income & Expenses Easily</span>
+                <span class="ticker-item"><span class="ticker-dot"></span>Manage Monthly Budgets Effectively</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="brand-stats">
+        <div class="stat-card">
+          <div class="stat-value"><span>All in one</span></div>
+          <div class="stat-label">Finance Tracker</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><span>Real Time</span></div>
+          <div class="stat-label">Expense Monitoring</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><span>insights</span></div>
+          <div class="stat-label">Reports & Analytics</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── RIGHT: Form panel ── -->
+    <main class="form-panel">
+      <div class="form-card">
+
+        <div class="mobile-logo" style="display:none;">
+          <div class="logo-icon" style="width:38px;height:38px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px rgba(56,189,248,0.3);">◈</div>
+          <span style="font-family:'DM Serif Display',serif;font-size:22px;color:#f0f6ff;">Fin<em style="font-style:italic;background:linear-gradient(135deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Sphere</em></span>
+        </div>
+
+        <div class="form-heading">
+          <span class="eyebrow">Secure Access</span>
+          <h1>Sign <em>In</em></h1>
+          <p>Monitor spending, plan budgets, and stay on top of your finances.</p>
+        </div>
+
+        <div class="form-rule">
+          <div class="form-rule-line"></div>
+          <div class="form-rule-dot"></div>
+          <div class="form-rule-line"></div>
+        </div>
+
+        <form id="login-form" novalidate>
+
+          <div class="field" style="--fd:0.30s">
+            <div class="field-inner">
+              <i class="fa-regular fa-envelope field-icon"></i>
+              <input type="email" id="l-email" placeholder="Email address" autocomplete="email"/>
+              <label for="l-email">Email address</label>
+            </div>
+            <div class="field-msg" id="l-email-msg"></div>
+          </div>
+
+          <div class="field" style="--fd:0.38s">
+            <div class="field-inner">
+              <i class="fa-solid fa-lock field-icon"></i>
+              <input type="password" id="l-pass" placeholder="Password" autocomplete="current-password"/>
+              <label for="l-pass">Password</label>
+              <button type="button" class="pass-toggle" id="l-pass-toggle" aria-label="Show/hide password">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+            <div class="field-msg" id="l-pass-msg"></div>
+          </div>
+
+          <div class="forgot-row">
+            <a href="forgot-password.html">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-submit" id="login-btn">Sign In</button>
+
+        </form>
+
+        <div class="or-divider">or continue with</div>
+        <p class="switch-link">
+          Don't have an account?
+          <a href="signup.html">Create one →</a>
+        </p>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+const form = document.getElementById('login-form');
+if (!form) return;
+form.addEventListener('submit', async function(e) {
+e.preventDefault();
+const email = document.getElementById('l-email').value.trim();
+const password = document.getElementById('l-pass').value;
+const btn = document.getElementById('login-btn');
+btn.disabled = true;
+btn.innerHTML = '<span class="spinner"></span> Signing In...';
+try {
+const response = await fetch('http://127.0.0.1:5500/api/auth/login', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ email, password })
+});
+const data = await response.json();
+if (data.success) {
+localStorage.setItem('finsphere_token', data.token);
+localStorage.setItem('finsphere_user', JSON.stringify(data.user));
+showToast('Success', 'Welcome back! Redirecting...', 'success');
+setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+} else {
+showToast('Error', data.message, 'error');
+btn.disabled = false;
+btn.innerHTML = 'Sign In';
+}
+} catch (err) {
+showToast('Error', 'Cannot connect to server. Is it running?', 'error');
+btn.disabled = false;
+btn.innerHTML = 'Sign In';
+}
+});
+});
+  </script>
+</body>
+</html>

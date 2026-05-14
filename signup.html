@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinSphere — Create Account</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body 
+    { animation: fadeIn 0.5s ease both; }
+
+    .form-card::before 
+    {
+      background: linear-gradient(90deg, transparent, rgba(129,140,248,0.5), rgba(56,189,248,0.3), transparent);
+    }
+    .form-heading .eyebrow { color: var(--violet); }
+    .form-rule-dot
+     {
+      background: var(--violet);
+      box-shadow: 0 0 8px var(--violet);
+    }
+    .btn-submit
+     {
+      background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
+      box-shadow: 0 8px 24px rgba(99,102,241,0.3), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+    .btn-submit:hover:not(:disabled) {
+      box-shadow: 0 14px 36px rgba(99,102,241,0.38), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    .orb-a 
+    {
+      background: radial-gradient(circle, rgba(129,140,248,0.10) 0%, transparent 65%) !important;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="bg-layer">
+    <div class="bg-mesh"></div>
+    <div class="orb-a bg-orb"></div>
+    <div class="orb-b bg-orb"></div>
+    <div class="orb-c bg-orb"></div>
+    <div class="data-lines"></div>
+  </div>
+
+  <div class="auth-layout">
+
+    <!-- ── LEFT: Brand panel ── -->
+    <aside class="brand-panel">
+      <div class="brand-top">
+
+        <div class="logo">
+          <div class="logo-icon" style="background:linear-gradient(135deg,#818cf8 0%,#38bdf8 100%);box-shadow:0 0 28px rgba(129,140,248,0.35),0 0 60px rgba(129,140,248,0.12);">◈</div>
+          <div class="logo-text">
+            <span class="logo-name">Fin<em>Sphere</em></span>
+            <span class="logo-tagline">Smart Finance Platform</span>
+          </div>
+        </div>
+
+        <div class="brand-hero">
+          <h2>
+            Take control of your<br/>
+            finances and build<br/>
+            smarter money habits.
+          </h2>
+          <p>
+                Create your FinSphere account in no time.
+                Track investments, move money instantly,
+                and stay fee-free — simple as that.
+          </p>
+          <div class="ticker-wrap">
+            <div class="ticker">
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Welcome to FinSphere – Smart Personal Finance Tracker</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Track Income & Expenses with Ease</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Create & Manage Monthly Budgets</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Analyze Spending Patterns & Trends</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Set Savings Goals & Track Progress</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Monitor Subscriptions & Avoid Wastage</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Get Your Financial Health Score</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Plan Future Finances with Smart Projections</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Build Emergency Fund Readiness</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Welcome to FinSphere – Smart Personal Finance Tracker</span>
+            <span class="ticker-item"><span class="ticker-dot" style="background:var(--violet);box-shadow:0 0 6px var(--violet)"></span>Track Income & Expenses with Ease</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-stats">
+        <div class="stat-card">
+          <div class="stat-value"><span>100%</span></div>
+          <div class="stat-label">Free to Use</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><span>Real-Time</span></div>
+          <div class="stat-label">Expense Tracking</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><span>Smart</span></div>
+          <div class="stat-label">Financial Insights</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── RIGHT: Form panel ── -->
+    <main class="form-panel">
+      <div class="form-card">
+
+        <div class="mobile-logo" style="display:none;">
+          <div class="logo-icon" style="width:38px;height:38px;background:linear-gradient(135deg,#818cf8,#38bdf8);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px rgba(129,140,248,0.3);">◈</div>
+          <span style="font-family:'DM Serif Display',serif;font-size:22px;color:#f0f6ff;">Fin<em style="font-style:italic;background:linear-gradient(135deg,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Sphere</em></span>
+        </div>
+
+        <div class="form-heading">
+          <span class="eyebrow">Get Started Free</span>
+            <h1>Create <em>Account</em></h1>
+            <p>Start your financial journey today. Monitor spending, plan budgets, and build smarter money habits.</p>
+        </div>
+
+        <div class="form-rule">
+          <div class="form-rule-line"></div>
+          <div class="form-rule-dot"></div>
+          <div class="form-rule-line"></div>
+        </div>
+
+        <form id="signup-form" novalidate>
+
+          <div class="field" style="--fd:0.28s">
+            <div class="field-inner">
+              <i class="fa-regular fa-user field-icon"></i>
+              <input type="text" id="s-name" placeholder="Full name" autocomplete="name"/>
+              <label for="s-name">Full name</label>
+            </div>
+            <div class="field-msg" id="s-name-msg"></div>
+          </div>
+
+          <div class="field" style="--fd:0.34s">
+            <div class="field-inner">
+              <i class="fa-regular fa-envelope field-icon"></i>
+              <input type="email" id="s-email" placeholder="Email address" autocomplete="email"/>
+              <label for="s-email">Email address</label>
+            </div>
+            <div class="field-msg" id="s-email-msg"></div>
+          </div>
+
+          <div class="field" style="--fd:0.40s">
+            <div class="field-inner">
+              <i class="fa-solid fa-lock field-icon"></i>
+              <input type="password" id="s-pass" placeholder="Create password" autocomplete="new-password"/>
+              <label for="s-pass">Create password</label>
+              <button type="button" class="pass-toggle" id="s-pass-toggle" aria-label="Toggle password">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+            <div class="strength">
+              <div class="strength-bars" id="strength-bars">
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+              </div>
+              <div class="strength-text" id="strength-text"></div>
+            </div>
+            <div class="field-msg" id="s-pass-msg"></div>
+          </div>
+
+          <div class="field" style="--fd:0.46s">
+            <div class="field-inner">
+              <i class="fa-solid fa-shield-halved field-icon"></i>
+              <input type="password" id="s-conf" placeholder="Confirm password" autocomplete="new-password"/>
+              <label for="s-conf">Confirm password</label>
+              <button type="button" class="pass-toggle" id="s-conf-toggle" aria-label="Toggle confirm">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+            <div class="field-msg" id="s-conf-msg"></div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="signup-btn">Create Account</button>
+
+        </form>
+
+        <p class="terms">
+          By creating an account you agree to FinSphere's
+          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </p>
+
+        <p class="switch-link">
+          Already have an account?
+          <a href="login.html">Sign in →</a>
+        </p>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+const form = document.getElementById('signup-form');
+if (!form) return;
+form.addEventListener('submit', async function(e) {
+e.preventDefault();
+const full_name = document.getElementById('s-name').value.trim();
+const email = document.getElementById('s-email').value.trim();
+const password = document.getElementById('s-pass').value;
+const confirm = document.getElementById('s-conf').value;
+// Basic frontend validation
+if (password !== confirm) {
+showToast('Error', 'Passwords do not match!', 'error');
+return;
+}
+const btn = document.getElementById('signup-btn');
+btn.disabled = true;
+btn.innerHTML = '<span class="spinner"></span> Creating Account...';
+try {
+const response = await fetch('http://127.0.0.1:5500/api/auth/signup', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ full_name, email, password })
+});
+const data = await response.json();
+if (data.success) {
+// Save token to localStorage
+localStorage.setItem('finsphere_token', data.token);
+localStorage.setItem('finsphere_user', JSON.stringify(data.user));
+showToast('Success', data.message, 'success');
+// Redirect to dashboard after 2 seconds
+setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+} else {
+showToast('Error', data.message, 'error');
+btn.disabled = false;
+btn.innerHTML = 'Create Account';
+}
+} catch (err) {
+showToast('Error', 'Cannot connect to server. Is it running?', 'error');
+btn.disabled = false;
+btn.innerHTML = 'Create Account';
+}
+});
+});
+  </script>
+</body>
+</html>

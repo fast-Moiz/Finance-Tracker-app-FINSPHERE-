@@ -1,0 +1,31 @@
+/* Budgets Specific Styles */
+.budget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.budget-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-card);
+  padding: 24px;
+  backdrop-filter: blur(20px);
+  animation: fadeUp 0.5s var(--ease-out) both;
+}
+.b-card-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+}
+.b-cat-info { display: flex; align-items: center; gap: 12px; }
+.b-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.b-name { font-size: 15px; font-weight: 600; color: var(--text-100); }
+.b-status { font-size: 11px; padding: 3px 8px; border-radius: 12px; }
+.b-amounts { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+.b-spent { color: var(--text-100); font-weight: 600; }
+.b-limit { color: var(--text-500); }
+.b-bar-track {
+  height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;
+}
+.b-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s var(--ease-out); }

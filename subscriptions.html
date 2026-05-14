@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinSphere — Subscriptions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="transactions.css"/>
+  <link rel="stylesheet" href="subscriptions.css"/>
+</head>
+<body>
+  <canvas id="particle-canvas"></canvas>
+  <div class="bg-layer">
+    <div class="bg-mesh"></div><div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div><div class="bg-orb orb-c"></div>
+  </div>
+
+  <div class="dash-layout">
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">◈</div>
+        <span class="sidebar-logo-name">Fin<em>Sphere</em></span>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="sidebar-section-label">Main Menu</div>
+
+        <a href="dashboard.html" class="nav-item">
+          <i class="fa-solid fa-grid-2"></i> Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-chart-line"></i> Analytics
+          <span class="nav-badge">New</span>
+        </a>
+        <a href="transactions.html" class="nav-item">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i> Transactions
+          <span class="nav-badge red">3</span>
+        </a>
+        <a href="budgets.html" class="nav-item">
+          <i class="fa-solid fa-sliders"></i> Budgets
+        </a>
+        <a href="savings.html" class="nav-item">
+          <i class="fa-solid fa-piggy-bank"></i> Savings Goals
+        </a>
+
+        <div class="sidebar-section-label" style="margin-top:8px;">Account</div>
+
+        <a href="subscriptions.html" class="nav-item active">
+          <i class="fa-solid fa-receipt"></i> Bills &amp; Subscriptions
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-shield-halved"></i> Security
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-gear"></i> Settings
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-profile">
+          <div class="profile-avatar">MS</div>
+          <div class="profile-info">
+            <div class="profile-name">Muhammad Bin Shahid</div>
+            <div class="profile-role">Premium Member</div>
+          </div>
+          <i class="fa-solid fa-chevron-right profile-chevron"></i>
+        </div>
+        <a href="login.html" class="sidebar-signout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+        </a>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="main-wrap">
+      <header class="topbar">
+        <button class="topbar-hamburger" id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
+          <i class="fa fa-bars"></i>
+        </button>
+        <span class="topbar-title">Subscriptions <em>Tracker</em></span>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1>Recurring <em style="font-style:italic;background:linear-gradient(135deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Payments</em></h1>
+            <p>Monitor active subscriptions to prevent leakage and wasted funds.</p>
+          </div>
+        </div>
+
+        <div class="leakage-banner" id="leakage-banner">
+          <i class="fa fa-triangle-exclamation"></i>
+          <div><strong>Subscription Leakage Detected:</strong> You have 2 unused subscriptions costing $28.98/mo.</div>
+        </div>
+
+        <div class="table-card">
+          <table class="txn-table">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Cycle</th>
+                <th>Next Billing</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="subs-tbody"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="subscriptions.js"></script>
+  <script src="nav-transition.js"></script>
+</body>
+</html>
